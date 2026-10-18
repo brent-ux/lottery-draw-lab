@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta name="theme-color" content="#07101d" /><meta name="apple-mobile-web-app-capable" content="yes" /><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" /><meta name="apple-mobile-web-app-title" content="Draw Lab" /><link rel="apple-touch-icon" href="apple-touch-icon.png" /><link rel="icon" type="image/svg+xml" href="favicon.svg" /><link rel="manifest" href="manifest.webmanifest" /><title>Lottery Draw Lab — Powerball & Mega Millions</title>
+<style>
+:root{--bg:#07101d;--panel:#101c2e;--panel2:#16253a;--line:#2a3b56;--text:#eef4ff;--muted:#9fb1c9;--blue:#4b93ff;--green:#35cf82;--red:#e33d50;--gold:#f2c94c;--amber:#f3a83b;--purple:#a97cff}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 50% -20%,#173054 0,#091422 38%,#07101d 75%);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.wrap{max-width:1540px;margin:0 auto;padding:20px}h1{margin:0 0 5px;font-size:27px;letter-spacing:-.03em}.sub{color:var(--muted);font-size:13px;line-height:1.45;max-width:990px}.top{display:flex;justify-content:space-between;gap:18px;align-items:flex-start;flex-wrap:wrap}.status{font-size:12px;font-weight:850;color:#c3dbff;padding-top:5px}.tabs{display:flex;gap:8px;margin:17px 0}.tab,button{border:1px solid var(--line);background:#132139;color:var(--text);border-radius:9px;padding:9px 12px;font-weight:750;cursor:pointer}.tab.active{background:#244a7c;border-color:#4a7db7}.btn-primary{background:#225eae;border-color:#3d7fce}.btn-one{background:linear-gradient(135deg,#2c70ce,#174d95);border:1px solid #6ba8ff;box-shadow:0 8px 22px rgba(43,116,210,.28);font-size:15px;padding:12px 18px;min-width:250px}.btn-one:disabled{opacity:.55;cursor:not-allowed;box-shadow:none}.runbar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:11px 13px;border-bottom:1px solid var(--line);background:linear-gradient(180deg,rgba(24,48,78,.95),rgba(13,27,45,.95));position:sticky;top:0;z-index:6}.runbar .btn-one{font-size:16px;padding:13px 20px;min-width:285px}.runbar .tiny{max-width:650px;line-height:1.35}.runbarStatus{margin-left:auto;font-size:10px;color:#bcd0e8;white-space:nowrap}@media(max-width:760px){.runbar{position:static}.runbar .btn-one{width:100%;min-width:0}.runbarStatus{margin-left:0}}.manualLabel{width:100%;font-size:9px;text-transform:uppercase;letter-spacing:.12em;color:#7189a7;margin-top:2px}.btn-good{background:#12623d;border-color:#25875a}.btn-warn{background:#5b3a16;border-color:#926029}.btn-danger{background:#54202a;border-color:#883648}.grid{display:grid;grid-template-columns:minmax(0,1fr) 390px;gap:15px}.card{background:rgba(16,28,46,.97);border:1px solid var(--line);border-radius:14px;box-shadow:0 12px 34px rgba(0,0,0,.28);overflow:hidden}.card-h{padding:11px 13px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:10px;align-items:center}.card-h strong{font-size:14px}.badge{font-size:10px;padding:3px 7px;border-radius:999px;background:#203149;color:#bfd1e8;border:1px solid #344a67}.machines{display:grid;grid-template-columns:1.35fr .85fr;gap:12px}.machinePane{min-width:0}.machineMeta{display:flex;justify-content:space-between;gap:8px;align-items:center;padding:8px 11px;color:var(--muted);font-size:11px;border-bottom:1px solid var(--line)}canvas{width:100%;height:auto;display:block;background:#081321}.results{padding:12px 14px;min-height:70px;border-top:1px solid var(--line)}.ballrow{display:flex;gap:7px;flex-wrap:wrap;align-items:center}.ball{width:39px;height:39px;border-radius:50%;background:#fff;color:#14223a;border:2px solid #dbe3ed;display:flex;align-items:center;justify-content:center;font-weight:900;box-shadow:inset 0 -6px 10px rgba(0,0,0,.1),0 3px 8px rgba(0,0,0,.25)}.ball.pb{background:var(--red);color:#fff;border-color:#ff7182}.ball.mm{background:var(--gold);color:#3b2c00;border-color:#ffe17a}.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:10px 13px;border-top:1px solid var(--line)}.metric{padding:8px;background:#0d192a;border:1px solid #2a3c56;border-radius:9px}.metric b{display:block;font-size:14px}.metric span{font-size:9.5px;color:var(--muted)}.controls{display:flex;gap:7px;flex-wrap:wrap;padding:11px 13px;border-top:1px solid var(--line)}.side{display:flex;flex-direction:column;gap:12px}.section{padding:12px 13px}.section p,.section li{font-size:11.5px;line-height:1.45;color:var(--muted)}.facts{display:grid;grid-template-columns:1fr auto;gap:6px 10px;font-size:11px}.facts div:nth-child(odd){color:var(--muted)}.facts div:nth-child(even){font-weight:750;text-align:right}.confidence{display:inline-block;margin-left:4px;padding:2px 5px;font-size:9px;border-radius:5px}.pub{background:#174a35;color:#bdf5d6}.rep{background:#493a12;color:#ffe39a}.est{background:#4a2530;color:#ffc7cf}.lab{background:#2c2b55;color:#d8d5ff}.setting{display:grid;grid-template-columns:1fr 110px;gap:8px;align-items:center;margin:7px 0}.setting label{font-size:11px;color:var(--muted)}input,select{width:100%;background:#0b1728;color:var(--text);border:1px solid #30435f;border-radius:7px;padding:7px 8px}.two{display:grid;grid-template-columns:1fr 1fr;gap:7px}.protocolBox{background:#0b1728;border:1px solid #2b3f5c;border-radius:9px;padding:9px}.protocolRow{display:flex;justify-content:space-between;gap:10px;font-size:11px;margin:4px 0}.protocolRow span:first-child{color:var(--muted)}.log{height:185px;overflow:auto;background:#081321;border:1px solid #263951;border-radius:8px;padding:8px;font:10.5px/1.45 ui-monospace,SFMono-Regular,Menlo,monospace;color:#bdd0e5;white-space:pre-wrap}.evidence{font-size:11px;line-height:1.5;color:var(--muted)}.evidence b{color:#dce9f8}.sourceLink{color:#9fc8ff;text-decoration:none}.tiny{font-size:10px;color:var(--muted)}.footer{margin-top:14px;color:#8398b1;font-size:10.5px;line-height:1.5}.divider{height:1px;background:var(--line);margin:9px 0}.pill{padding:3px 6px;border-radius:999px;font-size:9px;background:#1f3049;color:#bcd0e8}.capture{color:#bcefd3}.alert{color:#ffd297}@media(max-width:1120px){.grid{grid-template-columns:1fr}.machines{grid-template-columns:1fr 1fr}}@media(max-width:760px){.wrap{padding:10px}.machines{grid-template-columns:1fr}.metrics{grid-template-columns:1fr 1fr}.two{grid-template-columns:1fr}}
+
+.ticketLab{margin-top:15px}.ticketTop{display:flex;gap:10px;align-items:end;flex-wrap:wrap}.ticketTop .setting{display:block;margin:0;min-width:170px}.ticketTop label{display:block;margin-bottom:5px}.ticketGrid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-top:12px}.ticketLine{background:#0b1728;border:1px solid #2c405d;border-radius:10px;padding:10px}.ticketLine .n{font-size:10px;color:var(--muted);margin-bottom:7px}.ticketNums{display:flex;gap:5px;flex-wrap:wrap}.miniBall{width:30px;height:30px;border-radius:50%;background:#f5f7fb;color:#14223a;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:900;border:1px solid #d4dde8}.miniBall.pb{background:var(--red);color:white;border-color:#ff7182}.miniBall.mm{background:var(--gold);color:#382a00;border-color:#ffe17a}.ticketMeta{font-size:9px;color:#7f96b3;margin-top:7px;line-height:1.35}.tonightBanner{padding:9px 12px;background:#0d2237;border:1px solid #2c496a;border-radius:9px;font-size:11px;color:#c8dcf4}.calNote{margin-top:7px;padding:7px 8px;border-left:3px solid #755f23;background:#241f12;color:#e8dba8;font-size:10px;line-height:1.45}.statusGood{color:#aeecc9}.statusBusy{color:#ffd28a}@media(max-width:900px){.ticketGrid{grid-template-columns:repeat(2,1fr)}}@media(max-width:520px){.ticketGrid{grid-template-columns:1fr}}
+
+.bootHint{padding:9px 13px;font-size:12px;background:#482817;color:#ffe2b7;border:1px solid #8d5c34;border-radius:9px;margin:-7px 0 13px}.bootHint.ready{background:#102e26;color:#afe7cc;border-color:#235943}.bootHint.error{background:#4a2026;color:#ffe0e3;border-color:#b95362}.bootHint code{font-size:11px} .runHistory{border-top:1px solid var(--line);padding:10px 13px;background:#0a1626}.historyHead{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px}.historyHead strong{font-size:12px}.historyHead .spacer{flex:1}.historyHead button{padding:5px 8px;font-size:10px}.historyList{display:grid;gap:6px;max-height:245px;overflow:auto}.historyRow{display:grid;grid-template-columns:46px 1fr auto;gap:9px;align-items:center;background:#0d192a;border:1px solid #263951;border-radius:8px;padding:7px 9px}.historyIdx{font-size:10px;color:#7890ad;font-weight:800}.historyNums{font-size:12px;font-weight:850;letter-spacing:.01em}.historyMeta{font-size:9px;color:#7f96b3;margin-top:2px}.historyBonus{font-size:11px;font-weight:900;white-space:nowrap}.historyEmpty{font-size:10px;color:var(--muted);padding:5px 0}@media(max-width:560px){.historyRow{grid-template-columns:34px 1fr}.historyBonus{grid-column:2}.historyList{max-height:310px}}
+button,.tab{touch-action:manipulation;-webkit-tap-highlight-color:transparent}button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid #9fc8ff;outline-offset:2px}
+@media(max-width:860px){.machines{grid-template-columns:1fr}.tabs .tab{min-height:46px;flex:1}.ticketTop button{min-height:44px}.wrap{padding:10px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <div>
+      <h1>Lottery Draw Lab</h1>
+      <div class="sub">Interactive Powerball and Mega Millions mechanical-draw simulators. Choose a game, tap ONE BUTTON, and watch balls load, mix, and draw. Your completed tickets are saved in this browser and can be exported. Machine dimensions and timing are estimates, not verified lottery operating procedures.</div>
+    </div>
+    <div id="globalStatus" class="status">Ready</div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" data-game="pb">Powerball</button>
+    <button class="tab" data-game="mm">Mega Millions</button>
+  </div>
+
+  <div class="bootHint" id="bootHint" role="status">⚠ Interactive simulator has not started. If these tabs do not respond, this file is probably opening in a static preview. Open the HTML in a full Safari browser tab; this viewer may block JavaScript.</div>
+  <div class="grid">
+    <div class="card">
+      <div class="card-h"><strong id="gameTitle">Powerball</strong><span class="badge" id="phaseBadge">IDLE</span></div>
+      <div class="runbar">
+        <button id="oneBtn" class="btn-one">▶ ONE BUTTON — RUN EVERYTHING</button>
+        <span class="tiny" id="oneBtnHint">New state → equipment + ball-set selection → pre-tests → <b>sequential ball-by-ball load</b> → active bouncing mix → 5 whites → bonus ball.</span>
+        <span class="runbarStatus">Watch the machines below</span>
+      </div>
+      <div class="machines">
+        <div class="machinePane">
+          <div class="machineMeta"><span>Main white-ball machine</span><span id="mainCountLabel"></span></div>
+          <canvas id="mainCanvas" width="760" height="590"></canvas>
+        </div>
+        <div class="machinePane">
+          <div class="machineMeta"><span id="bonusMachineLabel">Bonus machine</span><span id="bonusCountLabel"></span></div>
+          <canvas id="bonusCanvas" width="520" height="590"></canvas>
+        </div>
+      </div>
+      <div class="results"><div id="resultBalls" class="ballrow"><span class="tiny">No draw yet.</span></div></div>
+      <div class="runHistory">
+        <div class="historyHead">
+          <strong>Saved Draw History</strong><span class="badge">full draws + tickets auto-saved</span><span class="spacer"></span>
+          <button id="historyCopyBtn">Copy all</button><button id="historyCsvBtn">Export CSV</button><button id="historyJsonBtn">Export JSON</button><button id="historyClearBtn" class="btn-danger">Clear</button>
+        </div>
+        <div id="historyList" class="historyList"><div class="historyEmpty">No saved runs yet. Every completed one-button/full draw and every Ticket Lab line will appear here automatically.</div></div>
+      </div>
+      <div class="metrics">
+        <div class="metric"><b id="simClock">0.0s</b><span>physics clock</span></div>
+        <div class="metric"><b id="seedShown">—</b><span>official-draw seed</span></div>
+        <div class="metric"><b id="equipmentShown">—</b><span>machine / ball set</span></div>
+        <div class="metric"><b id="drawCount">0</b><span>balls captured</span></div>
+      </div>
+      <div class="controls">
+        <div class="manualLabel">Manual / advanced controls</div>
+        <button id="protocolBtn" class="btn-warn">0. Select + pre-test</button>
+        <button id="loadBtn">1. Load official balls</button>
+        <button id="mixBtn">2. Start mixing</button>
+        <button id="drawBtn">3. Draw next</button>
+        <button id="fullBtn" class="btn-primary">Run official draw</button>
+        <button id="newSeedBtn" class="btn-good">New state + full draw</button>
+        <button id="exportBtn">Export record</button>
+        <button id="resetBtn" class="btn-danger">Reset</button>
+      </div>
+    </div>
+
+    <div class="side">
+      <div class="card">
+        <div class="card-h"><strong>Machine profile</strong><span id="profileName" class="badge"></span></div>
+        <div class="section facts" id="facts"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-h"><strong>Calibration</strong><span class="badge">editable</span></div>
+        <div class="section">
+          <div class="setting"><label>Pre-mix seconds <span class="confidence est">estimated</span></label><input id="premixInput" type="number" min="1" max="60" step="0.1"></div>
+          <div class="setting"><label>Main draw cadence <span class="confidence est">estimated</span></label><input id="intervalInput" type="number" min="0.5" max="15" step="0.1"></div>
+          <div class="setting"><label>Arm speed RPM <span class="confidence est">estimated</span></label><input id="rpmInput" type="number" min="5" max="120" step="1"></div>
+          <div class="setting"><label>Turbulence <span class="confidence lab">model</span></label><input id="turbInput" type="number" min="0" max="2" step="0.05"></div>
+          <div class="setting"><label>Capture dwell sec <span class="confidence lab">model</span></label><input id="dwellInput" type="number" min="0" max="2" step="0.05"></div>
+          <div class="setting"><label>Playback speed</label><select id="speedInput"><option value="1" selected>1× realtime</option><option value="2">2×</option><option value="4">4×</option><option value="8">8×</option></select></div>
+          <div class="setting"><label>Load proxy <span class="confidence est">unknown</span></label><select id="loadMode"><option value="pbRack">Powerball custom: 50s → 20s → rest</option><option value="mmRandomRack">Mega random 8-rack proxy</option><option value="rack">Generic upper-rack release</option><option value="batch">Centered batch release</option><option value="scatter">Random chamber release</option></select></div>
+          <div class="setting"><label>Ball load cadence sec <span class="confidence est">estimated</span></label><input id="loadCadenceInput" type="number" min="0.02" max="0.50" step="0.01"></div>
+          <div class="setting"><label>Seed</label><input id="seedInput" type="text" value="Brent-2026-v3"></div>
+          <div class="tiny">Published sources do not expose exact live-draw RPM, load geometry, chamber dimensions, or mix timing. v3.6 keeps those values visible and editable rather than implying false precision.</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-h"><strong>Pre-draw protocol</strong><span class="badge">security layer</span></div>
+        <div class="section">
+          <div class="setting"><label>Virtual equipment pool <span class="confidence lab">proxy</span></label><input id="equipmentPoolInput" type="number" min="2" max="8" step="1" value="4"></div>
+          <div class="setting"><label>Virtual ball-set pool <span class="confidence lab">proxy</span></label><input id="ballSetPoolInput" type="number" min="2" max="8" step="1" value="4"></div>
+          <div class="setting"><label>Pre-test draws <span class="confidence est">count unpublished</span></label><input id="pretestCountInput" type="number" min="0" max="10" step="1" value="4"></div>
+          <div class="protocolBox">
+            <div class="protocolRow"><span>Main machine</span><b id="mainMachineId">not selected</b></div>
+            <div class="protocolRow"><span>Main ball set</span><b id="mainSetId">not selected</b></div>
+            <div class="protocolRow"><span>Bonus machine</span><b id="bonusMachineId">not selected</b></div>
+            <div class="protocolRow"><span>Bonus ball set</span><b id="bonusSetId">not selected</b></div>
+            <div class="protocolRow"><span>Pre-tests completed</span><b id="pretestsDone">0</b></div>
+          </div>
+          <div class="tiny" style="margin-top:8px">The random-selection + pre-test concept is source-backed for both games. The exact number of available machines/sets and exact pre-test count are not fully published in current official materials, so pool sizes and test count are lab proxies.</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-h"><strong>Audit log</strong><button id="copyBtn" style="padding:5px 8px;font-size:10px">Copy</button></div>
+        <div class="section"><div id="log" class="log"></div></div>
+      </div>
+
+      <div class="card">
+        <div class="card-h"><strong>Evidence ledger</strong><span class="badge">v3.6 research</span></div>
+        <div class="section evidence" id="evidence"></div>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="card ticketLab">
+    <div class="card-h"><strong>Tonight Ticket Lab</strong><span class="badge">physical-simulation picks</span></div>
+    <div class="section">
+      <div id="tonightBanner" class="tonightBanner">Detecting tonight's game…</div>
+      <div class="ticketTop" style="margin-top:10px">
+        <div class="setting"><label>Number of ticket lines</label><input id="ticketCountInput" type="number" min="1" max="20" step="1" value="8"></div>
+        <button id="tonightGameBtn">Use tonight's game</button>
+        <button id="ticketRunBtn" class="btn-good">Generate mechanical tickets</button>
+        <button id="ticketCopyBtn">Copy tickets</button>
+        <button id="ticketExportBtn">Export tickets</button>
+        <span id="ticketStatus" class="tiny">Ready.</span>
+      </div>
+      <div class="calNote">Ticket Lab runs a fresh independent machine state for every line using the active game's mechanical profile, including the same sequential ball-by-ball loading phase used by the visualizer. Every generated line is auto-saved immediately to Saved Draw History and the latest ticket set is restored after a reload/screen change. It does not use hot/cold history or favorite numbers. White balls are displayed in ticket order (sorted); draw order and seed are retained in the metadata/export.</div>
+      <div id="ticketResults" class="ticketGrid"><div class="tiny">No ticket set generated yet.</div></div>
+      <div id="selfTest" class="tiny" style="display:none"></div>
+    </div>
+  </div>
+
+  <div class="footer">Model boundary: this is a deterministic, seedable 2D mechanical-process simulation, not certified lottery equipment and not a forecasting method. Every numbered ball uses the same simulated material/physics; only its number and starting state differ. Published facts, reported details and lab proxies are identified separately. Exact proprietary operating parameters that are not public remain editable rather than being presented as measured facts.</div>
+</div>
+<script>
+// Small independent startup diagnostic; runs before the full simulator.
+(function(){
+  var hint = document.getElementById('bootHint');
+  if(hint) hint.textContent='Starting interactive simulator…';
+  window.addEventListener('error',function(e){
+    var box=document.getElementById('bootHint');
+    if(box && !box.classList.contains('ready')){
+      box.className='bootHint error';
+      box.textContent='Simulator JavaScript error: '+(e.message||'unknown error')+'. If opening inside ChatGPT or Files preview, try Safari.';
+    }
+  });
+})();
+</script>
+<script>
+(() => {
+  const SOURCES={
+    halogen:'https://www.smartplay.com/lottery-products/lottery-draw-machines/halogen',
+    smartfaq:'https://www.smartplay.com/frequently-asked-questions',
+    pbofficial:'https://www.powerball.com/exciting-enhancements-coming-powerball-draw-show',
+    criterion:'https://www.smartplay.com/lottery-products/lottery-draw-machines/criterion',
+    mmsecurity:'https://www.megamillions.com/About/Security.aspx',
+    mmrules:'https://mapi.galottery.com/content/dam/portal/pdfs/player-zone/mega-millions-official-game-rules.pdf',
+    pbsecurity:'https://abcnews.com/US/security-scenes-big-powerball-drawing/story?id=36246467',
+    mmwsb:'https://www.wsbtv.com/news/local/take-an-exclusive-look-inside-mega-millions-lottery-studio/4YK44UO5WBBYPNPZGQTPZSNII4/',
+    mmcurrent:'https://www.megamillions.com/About/Security.aspx',
+    pbcurrent:'https://www.powerball.com/'
+  };
+  const PROFILES={
+    pb:{
+      name:'Powerball',profile:'PB Halogen II — v3.8 custom-load preset',title:'Powerball — Halogen II mechanical replica',mainN:69,bonusN:26,bonusName:'Red Powerball machine',bonusClass:'pb',bonusLabel:'PB',capture:'shaft',
+      premix:7.0,interval:3.0,rpm:42,turbulence:.74,dwell:.30,loadCadence:.07,accent:'#5f9cff',bonusAccent:'#e33d50',defaultLoad:'pbRack',machinePool:4,ballSetPool:4,pretests:4,
+      facts:[
+        ['Main matrix','5 of 69','pub'],['Bonus matrix','1 of 26','pub'],['Machine','Smartplay Halogen II','pub'],['Ball material','Solid foam','pub'],['Ball diameter','50 mm','pub'],['Mix','Dual counter-rotating arms','pub'],['Selection','Rising shaft / gravity-pick','pub'],['Chamber','Optical-grade acrylic','pub'],['Rack geometry','Custom sequence: 50s → 20s → rest','rep'],['Timing preset','7s / 3s proxy','est']
+      ],
+      evidence:[
+        ['Published','Powerball announced Halogen II machines and solid-foam balls beginning with the Sept. 30, 2020 drawing.',SOURCES.pbofficial],
+        ['Published','Smartplay lists Halogen with 100-ball mix capacity, 50 mm foam balls, dual counter-rotating arms and optical-grade acrylic.',SOURCES.halogen],
+        ['Published','Smartplay describes Halogen II as a gravity-pick machine with a mixing turntable and rising-shaft selection tube.',SOURCES.smartfaq],
+        ['Custom loading experiment','Powerball white-ball load order is intentionally overridden for tonight: 50–59 first, then 20–29, then all remaining white balls in ascending order. This is a user-directed simulation scenario, not a claim about the official MUSL loading procedure.',null],
+        ['Timing proxy','The 7-second initial mix / 3-second cadence preset is a visual/historical operating proxy, not a published current MUSL specification.',null],
+        ['Unknown','Current public sources do not provide exact live RPM, chamber dimensions, current rack-release timing, friction/restitution or exact pre-test count.',null]
+      ]
+    },
+    mm:{
+      name:'Mega Millions',profile:'MM Criterion-style — v3.8 evidence preset',title:'Mega Millions — Criterion-style mechanical replica',mainN:70,bonusN:24,bonusName:'Gold Mega Ball machine',bonusClass:'mm',bonusLabel:'MB',capture:'drop',
+      premix:8.0,interval:4.0,rpm:40,turbulence:.78,dwell:.25,loadCadence:.07,accent:'#69a7ff',bonusAccent:'#f2c94c',defaultLoad:'mmRandomRack',machinePool:4,ballSetPool:7,pretests:4,
+      facts:[
+        ['Main matrix','5 of 70','pub'],['Bonus matrix','1 of 24','pub'],['Draw location','WSB-TV, Atlanta','pub'],['Machine','Criterion II (reported)','rep'],['Criterion ball size','50 mm foam','pub'],['Mix','Counter-rotating arms','rep'],['Selection','Bottom gravity drop','rep'],['Official draw duration','< 60 sec','pub'],['Ball-set inventory','7 sets reported','rep'],['Load order','Random sequential-rack proxy','rep']
+      ],
+      evidence:[
+        ['Published','Mega Millions says machines and ball sets are randomly selected, pre-tested and observed by lottery officials plus an independent auditor; the live drawing takes under 60 seconds.',SOURCES.mmsecurity],
+        ['Published / 2025 studio report','WSB-TV reported seven ball sets, frequent integrity testing, sealed storage and repeated test draws of five white balls plus one gold ball.',SOURCES.mmwsb],
+        ['Manufacturer fact','Smartplay identifies Criterion II/III as lotto-style mechanical systems; Criterion uses 50 mm foam balls and counter-rotating mixing mechanisms.',SOURCES.criterion],
+        ['Reported',"Criterion II is widely reported as Mega Millions' machine; the current official Mega Millions security page does not identify the model.",null],
+        ['Load proxy','Historical Georgia draw documentation/reporting described randomized rack loading. v3.8 randomizes the numbered loading sequence across an eight-column rack proxy, then releases balls one at a time so load order affects the physical state.',null],
+        ['Unknown','Current public sources do not disclose exact live RPM, chamber dimensions, precise load timing, current ball mass/friction/restitution, exact cadence or exact pre-test count.',null]
+      ]
+    }
+  };
+  const $=id=>document.getElementById(id);
+  const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+  function hashString(s){let h=2166136261>>>0;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619)}return h>>>0}
+  function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+  function alphaId(n){return String.fromCharCode(65+n)}
+  function downloadText(name,text,mime='application/json'){const b=new Blob([text],{type:mime});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},200)}
+
+  class DrawMachine{
+    constructor(canvas,bonus=false){this.canvas=canvas;this.ctx=canvas.getContext('2d');this.bonus=bonus;this.reset()}
+    reset(){this.balls=[];this.captured=[];this.loaded=false;this.loading=false;this.loadQueue=[];this.loadSequence=[];this.loadAccumulator=0;this.loadCadence=.07;this.mixOn=false;this.angleA=0;this.angleB=Math.PI/2;this.captureAnim=0;this.captureMode='drop';this.rng=Math.random;this.totalN=0;this.rpm=40;this.turb=.7;this.accent='#fff';this.loadMode='rack'}
+    configure({n,accent,rpm,turb,capture,rng,loadMode}){this.reset();this.totalN=n;this.accent=accent;this.rpm=rpm;this.turb=turb;this.captureMode=capture;this.rng=rng;this.loadMode=loadMode}
+    geom(){const w=this.canvas.width,h=this.canvas.height,R=Math.min(w*.39,h*.39);return{w,h,cx:w/2,cy:h*.48,R,gateY:h*.48+R*.85}}
+    makeLoadOrder(){
+      const order=Array.from({length:this.totalN},(_,i)=>i+1);
+      // v3.8 custom Powerball scenario requested for tonight:
+      // drop every white ball in the 50s first, then every white ball in the 20s,
+      // then release the remaining white balls in the normal ascending rack order.
+      // The red Powerball machine is intentionally left unchanged.
+      if(this.loadMode==='pbRack'&&!this.bonus&&this.totalN===69){
+        const fifties=order.filter(n=>n>=50&&n<=59);
+        const twenties=order.filter(n=>n>=20&&n<=29);
+        const rest=order.filter(n=>!(n>=50&&n<=59)&&!(n>=20&&n<=29));
+        return [...fifties,...twenties,...rest];
+      }
+      if(this.loadMode==='mmRandomRack'||this.loadMode==='scatter'||this.loadMode==='batch'){
+        for(let i=order.length-1;i>0;i--){const j=Math.floor(this.rng()*(i+1));[order[i],order[j]]=[order[j],order[i]]}
+      }
+      return order
+    }
+    entryPoint(n,index){
+      const g=this.geom(),N=this.totalN,br=Math.max(7.4,Math.min(11,g.R/12.6));let x=g.cx,y=g.cy-g.R+br*1.55;
+      if(this.loadMode==='pbRack'){
+        const col=Math.floor((n-1)/14),cols=5;
+        x=g.cx-g.R*.56+(col/(cols-1))*g.R*1.12+(this.rng()-.5)*br*.20;
+      }else if(this.loadMode==='mmRandomRack'){
+        const col=index%8,cols=8;
+        x=g.cx-g.R*.60+(col/(cols-1))*g.R*1.20+(this.rng()-.5)*br*.22;
+      }else if(this.loadMode==='rack'){
+        const cols=Math.ceil(Math.sqrt(N*1.25)),col=index%cols;
+        x=g.cx-g.R*.58+(col/(cols-1||1))*g.R*1.16+(this.rng()-.5)*br*.28;
+      }else if(this.loadMode==='batch'){
+        x=g.cx+(this.rng()-.5)*g.R*.22;
+      }else{
+        x=g.cx+(this.rng()-.5)*g.R*1.05;
+      }
+      return{x,y,br}
+    }
+    spawnNextBall(){
+      if(!this.loadQueue.length)return false;
+      const n=this.loadQueue.shift(),idx=this.loadSequence.length,{x,y,br}=this.entryPoint(n,idx);
+      this.balls.push({n,x,y,vx:(this.rng()-.5)*14,vy:18+this.rng()*15,r:br});
+      this.loadSequence.push(n);
+      if(!this.loadQueue.length){this.loading=false;this.loaded=true}
+      return true
+    }
+    beginLoad(cadence=.07){
+      this.balls=[];this.captured=[];this.loaded=false;this.loading=true;this.mixOn=false;this.loadCadence=Math.max(.02,+cadence||.07);this.loadAccumulator=0;this.loadSequence=[];this.loadQueue=this.makeLoadOrder();
+      this.spawnNextBall();
+    }
+    setParams(rpm,turb){this.rpm=rpm;this.turb=turb}
+    update(dt){if(!this.loaded&&!this.loading&&!this.balls.length)return;const g=this.geom(),omega=this.rpm*Math.PI*2/60;
+      if(this.loading){this.loadAccumulator+=dt;while(this.loadAccumulator>=this.loadCadence&&this.loadQueue.length){this.loadAccumulator-=this.loadCadence;this.spawnNextBall()}}
+      if(this.mixOn){this.angleA+=omega*dt;this.angleB-=omega*dt*.94}
+      this.captureAnim=Math.max(0,this.captureAnim-dt);
+      // v3.3: gravity is always present, but while MIXING the rotating arms now transfer
+      // their actual tangential motion into nearby balls.  This prevents the old
+      // "quiet pile at the bottom" behavior and makes the visible motion part of
+      // the same physics state used by capture().
+      const gravity=54;
+      for(const b of this.balls){
+        b.vy+=gravity*dt;
+        if(this.mixOn){
+          const dx=b.x-g.cx,dy=b.y-g.cy,rr=Math.hypot(dx,dy)+1;
+          // Broad recirculation field: keeps balls circulating between arm contacts.
+          const band=Math.sin((rr/g.R)*Math.PI*2.5+this.angleA*1.35),dir=band>=0?1:-1,swirl=235*this.turb*dir;
+          b.vx+=(-dy/rr)*swirl*dt;
+          b.vy+=(dx/rr)*swirl*dt;
+          // Mild lift in the lower half approximates the upward toss produced by the
+          // paddle/arm system in a 2-D model. It is deliberately symmetric in x.
+          const lower=clamp((b.y-g.cy)/(g.R*.78),0,1);
+          b.vy-=210*this.turb*lower*dt;
+          // Rotating-arm contact.  The blade point velocity is omega*r, so an arm hit
+          // gives a ball a real impulse instead of the tiny acceleration used in v3.2.
+          const bladeHit=(ang,omegaSigned)=>{
+            const ux=Math.cos(ang),uy=Math.sin(ang),nx=-uy,ny=ux;
+            const along=dx*ux+dy*uy,perp=dx*nx+dy*ny;
+            if(Math.abs(perp)<b.r*2.45&&Math.abs(along)<g.R*.80){
+              const bladeVn=omegaSigned*along;
+              const ballVn=b.vx*nx+b.vy*ny;
+              const delta=bladeVn-ballVn;
+              // Contact strength tapers at the edge of the blade thickness.
+              const contact=1-Math.min(1,Math.abs(perp)/(b.r*2.45));
+              const impulse=delta*(.72+.22*this.turb)*contact;
+              b.vx+=nx*impulse; b.vy+=ny*impulse;
+              // Small radial component helps balls leave the blade instead of riding it.
+              const sr=along>=0?1:-1;
+              b.vx+=ux*sr*38*this.turb*contact; b.vy+=uy*sr*38*this.turb*contact;
+            }
+          };
+          bladeHit(this.angleA, omega);
+          bladeHit(this.angleB,-omega*.94);
+          // Tiny deterministic jitter breaks exact symmetries without choosing numbers.
+          b.vx+=(this.rng()-.5)*70*this.turb*dt;
+          b.vy+=(this.rng()-.5)*70*this.turb*dt;
+        }
+        const drag=Math.pow(this.mixOn?.997:.993,dt*60);b.vx*=drag;b.vy*=drag;
+        const sp=Math.hypot(b.vx,b.vy),max=this.mixOn?520:320;if(sp>max){b.vx*=max/sp;b.vy*=max/sp}
+        b.x+=b.vx*dt;b.y+=b.vy*dt;
+        const dx2=b.x-g.cx,dy2=b.y-g.cy,d=Math.hypot(dx2,dy2),lim=g.R-b.r-4;
+        if(d>lim){const nx=dx2/d,ny=dy2/d;b.x=g.cx+nx*lim;b.y=g.cy+ny*lim;const vn=b.vx*nx+b.vy*ny;if(vn>0){b.vx-=1.88*vn*nx;b.vy-=1.88*vn*ny}}
+      }
+      const arr=this.balls;for(let i=0;i<arr.length;i++)for(let j=i+1;j<arr.length;j++){const a=arr[i],b=arr[j],dx=b.x-a.x,dy=b.y-a.y,min=a.r+b.r,d2=dx*dx+dy*dy;if(d2>0&&d2<min*min){const d=Math.sqrt(d2),nx=dx/d,ny=dy/d,over=min-d;a.x-=nx*over*.5;a.y-=ny*over*.5;b.x+=nx*over*.5;b.y+=ny*over*.5;const rel=(b.vx-a.vx)*nx+(b.vy-a.vy)*ny;if(rel<0){const imp=-1.76*rel/2;a.vx-=imp*nx;a.vy-=imp*ny;b.vx+=imp*nx;b.vy+=imp*ny}}}
+    }
+    capture(){if(!this.loaded||!this.balls.length)return null;const g=this.geom();let best=null,bestScore=Infinity;for(const b of this.balls){const dx=Math.abs(b.x-g.cx)/(g.R||1),bottom=(g.cy+g.R-b.y)/(g.R||1),down=clamp(b.vy/260,-1,1);let score;if(this.captureMode==='shaft')score=dx*2.05+bottom*.72-down*.13;else score=dx*1.75+bottom*.84-down*.15;if(score<bestScore){bestScore=score;best=b}}
+      this.balls=this.balls.filter(x=>x!==best);this.captured.push(best.n);this.captureAnim=.45;return best.n}
+    draw(){const c=this.ctx,g=this.geom();c.clearRect(0,0,g.w,g.h);c.fillStyle='#081321';c.fillRect(0,0,g.w,g.h);const grad=c.createRadialGradient(g.cx-g.R*.23,g.cy-g.R*.28,g.R*.14,g.cx,g.cy,g.R);grad.addColorStop(0,'rgba(101,151,210,.20)');grad.addColorStop(.8,'rgba(35,64,103,.13)');grad.addColorStop(1,'rgba(6,14,26,.65)');c.beginPath();c.arc(g.cx,g.cy,g.R,0,Math.PI*2);c.fillStyle=grad;c.fill();c.lineWidth=7;c.strokeStyle='rgba(143,184,230,.56)';c.stroke();
+      const arm=(ang,color)=>{c.save();c.translate(g.cx,g.cy);c.rotate(ang);c.strokeStyle=color;c.lineWidth=9;c.lineCap='round';c.beginPath();c.moveTo(-g.R*.72,0);c.lineTo(g.R*.72,0);c.stroke();c.restore()};arm(this.angleA,'rgba(225,235,247,.44)');arm(this.angleB,'rgba(132,171,217,.43)');c.beginPath();c.arc(g.cx,g.cy,17,0,Math.PI*2);c.fillStyle='#9fb3ca';c.fill();
+      if(this.captureMode==='shaft'){const rise=this.captureAnim>0?28:0;c.fillStyle='#aebfd1';c.fillRect(g.cx-13,g.gateY+3-rise,26,58+rise);c.fillStyle='#1d2d44';c.fillRect(g.cx-8,g.gateY-rise,16,11);c.fillStyle='rgba(143,184,230,.5)';c.fillText('RISING SHAFT',g.cx-42,g.h-20)}else{c.fillStyle='#aebfd1';c.fillRect(g.cx-g.R*.13,g.gateY,g.R*.26,12);c.fillStyle='#1d2d44';c.fillRect(g.cx-g.R*.08,g.gateY+2,g.R*.16,10);c.fillStyle='rgba(143,184,230,.5)';c.fillText('BOTTOM DROP',g.cx-38,g.h-20)}
+      for(const b of this.balls){c.beginPath();c.arc(b.x,b.y,b.r,0,Math.PI*2);c.fillStyle=this.bonus?this.accent:'#f5f7fb';c.strokeStyle=this.bonus?'rgba(255,255,255,.75)':'#cfd8e4';c.lineWidth=1.5;c.fill();c.stroke();c.fillStyle=this.bonus&&this.accent==='#f2c94c'?'#302500':(this.bonus?'#fff':'#1a2940');c.font=`700 ${Math.max(7,b.r*.87)}px ui-sans-serif,system-ui`;c.textAlign='center';c.textBaseline='middle';c.fillText(b.n,b.x,b.y)}
+      c.fillStyle='rgba(220,232,247,.72)';c.font='12px ui-monospace,monospace';c.textAlign='left';c.fillText(`${this.balls.length}/${this.totalN} balls`,12,22);c.fillText(this.loading?`LOADING ${this.loadSequence.length}/${this.totalN}`:(this.mixOn?'MIXING':'MIX OFF'),12,40)
+    }
+  }
+
+  let game='pb',profile=PROFILES.pb,main=new DrawMachine($('mainCanvas')),bonus=new DrawMachine($('bonusCanvas'),true),phase='idle',simTime=0,lastTS=performance.now(),accum=0,auto=false,autoStage='idle',nextEvent=0,activeSeed='',results={main:[],bonus:null},equipment=null,pretests=[],officialRecord=null;
+  function log(msg,cls=''){const e=$('log'),t=simTime.toFixed(2).padStart(7,' ');e.textContent+=`[${t}s] ${msg}\n`;e.scrollTop=e.scrollHeight}
+  function setPhase(p){phase=p;$('phaseBadge').textContent=p.toUpperCase();$('globalStatus').textContent=`${profile.name}: ${p}`}
+  function params(){return{premix:+$('premixInput').value,interval:+$('intervalInput').value,rpm:+$('rpmInput').value,turb:+$('turbInput').value,dwell:+$('dwellInput').value,loadCadence:+$('loadCadenceInput').value,speed:+$('speedInput').value,seed:$('seedInput').value||'seed',loadMode:$('loadMode').value}}
+  function reseed(seed,salt='official'){activeSeed=seed;const h=hashString(`${seed}|${game}|${salt}`);main.rng=mulberry32(h^0xA53A9E37);bonus.rng=mulberry32(h^0x71D3C24B);$('seedShown').textContent=seed.length>14?seed.slice(0,13)+'…':seed}
+  function configureMachines(seed=params().seed,salt='official'){const p=params();reseed(seed,salt);main.configure({n:profile.mainN,accent:profile.accent,rpm:p.rpm,turb:p.turb,capture:profile.capture,rng:main.rng,loadMode:p.loadMode});bonus.configure({n:profile.bonusN,accent:profile.bonusAccent,rpm:p.rpm,turb:p.turb,capture:profile.capture,rng:bonus.rng,loadMode:p.loadMode})}
+  function configure(){profile=PROFILES[game];$('gameTitle').textContent=profile.title;$('profileName').textContent=profile.profile;$('mainCountLabel').textContent=`${profile.mainN} balls → draw 5`;$('bonusCountLabel').textContent=`${profile.bonusN} balls → draw 1`;$('bonusMachineLabel').textContent=profile.bonusName;$('premixInput').value=profile.premix;$('intervalInput').value=profile.interval;$('rpmInput').value=profile.rpm;$('turbInput').value=profile.turbulence;$('dwellInput').value=profile.dwell;$('loadCadenceInput').value=profile.loadCadence;$('loadMode').value=profile.defaultLoad;$('equipmentPoolInput').value=profile.machinePool;$('ballSetPoolInput').value=profile.ballSetPool;$('pretestCountInput').value=profile.pretests;
+    $('facts').innerHTML=profile.facts.map(([k,v,t])=>`<div>${k}</div><div>${v} <span class="confidence ${t}">${t==='pub'?'published':t==='rep'?'reported':'estimated'}</span></div>`).join('');$('evidence').innerHTML=profile.evidence.map(([tag,txt,url])=>`<p><b>${tag}:</b> ${txt}${url?` <a class="sourceLink" href="${url}" target="_blank">source ↗</a>`:''}</p>`).join('');resetAll(true);configureMachines()}
+  function resetEquipment(){equipment=null;pretests=[];$('mainMachineId').textContent='not selected';$('mainSetId').textContent='not selected';$('bonusMachineId').textContent='not selected';$('bonusSetId').textContent='not selected';$('pretestsDone').textContent='0';$('equipmentShown').textContent='—'}
+  function resetAll(clearLog=true,preserveOneButton=false){auto=false;autoStage='idle';simTime=0;accum=0;nextEvent=0;results={main:[],bonus:null};officialRecord=null;main.reset();bonus.reset();setPhase('idle');renderResults();$('simClock').textContent='0.0s';$('drawCount').textContent='0';const ob=$('oneBtn');if(ob&&!preserveOneButton){ob.disabled=false;ob.textContent='▶ ONE BUTTON — RUN EVERYTHING'}if(clearLog)$('log').textContent=''}
+  function selectEquipment(){const p=params(),rng=mulberry32(hashString(`${p.seed}|${game}|protocol`)),mPool=+$('equipmentPoolInput').value,sPool=+$('ballSetPoolInput').value;equipment={mainMachine:alphaId(Math.floor(rng()*mPool)),mainSet:alphaId(Math.floor(rng()*sPool)),bonusMachine:alphaId(Math.floor(rng()*mPool)),bonusSet:alphaId(Math.floor(rng()*sPool))};$('mainMachineId').textContent=equipment.mainMachine;$('mainSetId').textContent=equipment.mainSet;$('bonusMachineId').textContent=equipment.bonusMachine;$('bonusSetId').textContent=equipment.bonusSet;$('equipmentShown').textContent=`${equipment.mainMachine}/${equipment.mainSet} · ${equipment.bonusMachine}/${equipment.bonusSet}`;log(`Protocol: randomly selected virtual main machine ${equipment.mainMachine}, main set ${equipment.mainSet}, bonus machine ${equipment.bonusMachine}, bonus set ${equipment.bonusSet}.`)}
+  function simulateSequentialLoad(m,b,cadence,dt=1/120){
+    m.beginLoad(cadence);b.beginLoad(cadence);let guard=0;
+    while((!m.loaded||!b.loaded)&&guard<20000){m.update(dt);b.update(dt);guard++}
+    return guard*dt
+  }
+  function quickTestDraw(seed){const p=params();configureMachines(seed,'pretest');const dt=1/120;simulateSequentialLoad(main,bonus,p.loadCadence,dt);main.mixOn=bonus.mixOn=true;const steps=Math.round(2.8/dt);for(let i=0;i<steps;i++){main.update(dt);bonus.update(dt)}const whites=[];for(let k=0;k<5;k++){whites.push(main.capture());for(let j=0;j<70;j++){main.update(dt);bonus.update(dt)}}const bb=bonus.capture();return{white:whites,bonus:bb}}
+  async function runProtocol(preserveOneButton=false){resetAll(true,preserveOneButton);selectEquipment();pretests=[];const n=+$('pretestCountInput').value,p=params();setPhase('pre-testing');for(let i=0;i<n;i++){const ob=$('oneBtn');if(preserveOneButton&&ob)ob.textContent=`PRE-TEST ${i+1}/${n}…`;await new Promise(r=>requestAnimationFrame(()=>r()));const r=quickTestDraw(`${p.seed}|test${i+1}|${equipment.mainMachine}${equipment.mainSet}${equipment.bonusMachine}${equipment.bonusSet}`);pretests.push(r);log(`Pre-test ${i+1}/${n}: ${r.white.join('-')} | ${profile.bonusLabel} ${r.bonus}.`);$('pretestsDone').textContent=String(i+1);await new Promise(r=>setTimeout(r,0))}configureMachines(p.seed,'official');setPhase('protocol ready');log('Pre-test cycle complete. Official draw state is freshly reset; the official sequential loading order is generated independently from the pre-tests.');return true}
+  function renderResults(){const e=$('resultBalls');if(!results.main.length&&results.bonus==null){e.innerHTML='<span class="tiny">No draw yet.</span>';return}let h=results.main.map(n=>`<span class="ball">${n}</span>`).join('');if(results.bonus!=null)h+=`<span style="font-weight:900;margin:0 2px">+</span><span class="ball ${profile.bonusClass}">${results.bonus}</span>`;e.innerHTML=h}
+  function load(){if(!equipment)selectEquipment();const p=params();configureMachines(p.seed,'official');main.beginLoad(p.loadCadence);bonus.beginLoad(p.loadCadence);results={main:[],bonus:null};renderResults();setPhase('loading');log(`Official sequential load started: ${profile.mainN} main + ${profile.bonusN} bonus balls; proxy=${p.loadMode}; cadence=${p.loadCadence.toFixed(2)}s/ball.`)}
+  function startMix(){if(main.loading||bonus.loading){log('Mix request held: sequential loading is still in progress.');return false}if(!main.loaded||!bonus.loaded){load();return false}const p=params();main.setParams(p.rpm,p.turb);bonus.setParams(p.rpm,p.turb);main.mixOn=bonus.mixOn=true;setPhase('mixing');log(`Sequential load complete. Main load order: ${main.loadSequence.join('→')}.`);log(`Bonus load order: ${bonus.loadSequence.join('→')}.`);log(`Official mixing started. Model arm speed=${p.rpm} RPM; turbulence=${p.turb}.`);return true}
+  function drawNext(){if(main.loading||bonus.loading){log('Draw held: loading is still in progress.');return}if(!main.loaded||!bonus.loaded){load();return}if(!main.mixOn&&!startMix())return;if(results.main.length<5){const n=main.capture();results.main.push(n);log(`MAIN capture ${results.main.length}/5 → ${n}.`)}else if(results.bonus==null){const n=bonus.capture();results.bonus=n;log(`${profile.bonusLabel} capture → ${n}.`);setPhase('complete');main.mixOn=bonus.mixOn=false;auto=false;autoStage='complete';officialRecord=makeRecord();saveHistoryRecord(officialRecord);const b=$('oneBtn');if(b){b.disabled=false;b.textContent='▶ ONE BUTTON — RUN AGAIN'}}renderResults();$('drawCount').textContent=String(results.main.length+(results.bonus!=null?1:0))}
+  function fullDraw(newSeed=false){if(newSeed){$('seedInput').value=`${profile.name}-${Date.now().toString(36)}-${Math.floor(Math.random()*1e6).toString(36)}`;resetEquipment()}resetAll(true);if(!equipment)selectEquipment();load();auto=true;autoStage='loading';setPhase('auto loading');log('Automatic official draw armed. The machine will finish the sequential load before any mixing begins.')}
+  async function oneButtonRun(){
+    const b=$('oneBtn');if(auto||b.disabled)return;b.disabled=true;b.textContent='STARTING…';try{$('seedInput').value=cryptoSeed(`${game}-onebutton`);resetEquipment();await runProtocol(true);b.textContent='LOADING BALLS…';load();b.disabled=true;auto=true;autoStage='loading';setPhase('auto loading');const p=params();log(`ONE-BUTTON RUN: pre-tests complete; now loading balls one at a time at ${p.loadCadence.toFixed(2)}s/ball.`)}catch(err){auto=false;autoStage='idle';setPhase('error');log(`ERROR: ${err&&err.message?err.message:String(err)}`);b.disabled=false;b.textContent='▶ RETRY ONE-BUTTON RUN'}}
+  function autoStep(){if(!auto)return;const p=params();if(autoStage==='loading'){if(main.loaded&&bonus.loaded){if(startMix()){autoStage='mixing';nextEvent=simTime+p.premix;setPhase('auto pre-mix');log(`Sequential load finished. Mixing for ${p.premix.toFixed(1)}s before first capture; cadence ${p.interval.toFixed(1)}s thereafter.`)}}return}if(autoStage==='mixing'&&simTime>=nextEvent){if(results.main.length<5){drawNext();nextEvent+=p.interval;setPhase(`auto main ${results.main.length}/5`)}else if(results.bonus==null)drawNext()}}
+  function makeRecord(){const p=params();return{version:'3.9',source:'full-draw',game:profile.name,timestamp:new Date().toISOString(),seed:activeSeed,equipment,evidenceMode:'published + reported + explicit estimates',parameters:{premixSeconds:p.premix,mainCadenceSeconds:p.interval,armRpm:p.rpm,turbulence:p.turb,captureDwellSeconds:p.dwell,loadProxy:p.loadMode,loadCadenceSeconds:p.loadCadence},loading:{mainOrder:[...main.loadSequence],bonusOrder:[...bonus.loadSequence]},pretests,official:{white:[...results.main],bonus:results.bonus}}}
+  const HISTORY_KEY='lotteryDrawLab.web.drawHistory';
+  const HISTORY_BACKUP_KEY='lotteryDrawLab.web.drawHistory.backup';
+  const LAST_TICKETS_KEY='lotteryDrawLab.web.lastTicketSet';
+  let drawHistory=[];
+  function safeStorageProviders(){const stores=[];try{stores.push(window.localStorage)}catch{}try{stores.push(window.sessionStorage)}catch{}return stores}
+  function storageRead(key){
+    for(const s of safeStorageProviders()){try{const v=s.getItem(key);if(v)return v}catch{}}
+    return null;
+  }
+  function storageWrite(key,value){
+    let ok=false;
+    for(const s of safeStorageProviders()){try{s.setItem(key,value);ok=true}catch{}}
+    return ok;
+  }
+  function loadHistory(){
+    try{
+      const legacy=(()=>{for(const key of ['lotteryDrawLab.v3_8.drawHistory','lotteryDrawLab.v3_6.drawHistory','lotteryDrawLab.v3_5.drawHistory','lotteryDrawLab.v3_4.drawHistory'])for(const s of safeStorageProviders()){try{const v=s.getItem(key);if(v)return v}catch{}}return null})();
+      const raw=storageRead(HISTORY_KEY)||storageRead(HISTORY_BACKUP_KEY)||legacy;
+      drawHistory=raw?JSON.parse(raw):[];if(!Array.isArray(drawHistory))drawHistory=[];
+      if(legacy&&!storageRead(HISTORY_KEY))persistHistory();
+    }catch{drawHistory=[]}
+    renderHistory();
+  }
+  function persistHistory(){const raw=JSON.stringify(drawHistory);storageWrite(HISTORY_KEY,raw);storageWrite(HISTORY_BACKUP_KEY,raw)}
+  function historyTicketLine(r){const whites=[...(r.official?.white||[])].sort((a,b)=>a-b);const bonusLabel=(r.game==='Powerball')?'PB':'MB';return `${whites.join(' - ')} | ${bonusLabel} ${r.official?.bonus ?? '—'}`}
+  function saveHistoryRecord(r){
+    if(!r||!r.official||r.official.bonus==null||r.official.white?.length!==5)return;
+    const key=`${r.game}|${r.seed}|${r.official.white.join('-')}|${r.official.bonus}`;
+    if(drawHistory.some(x=>x._key===key))return;
+    drawHistory.unshift({...r,_key:key});
+    if(drawHistory.length>200)drawHistory=drawHistory.slice(0,200);
+    persistHistory();renderHistory();
+  }
+  function renderHistory(){
+    const e=$('historyList');if(!e)return;
+    if(!drawHistory.length){e.innerHTML='<div class="historyEmpty">No saved runs yet. Every completed one-button/full draw and every Ticket Lab line will appear here automatically.</div>';return}
+    e.innerHTML=drawHistory.map((r,i)=>{const sorted=[...(r.official?.white||[])].sort((a,b)=>a-b),bonusLabel=r.game==='Powerball'?'PB':'MB',when=new Date(r.timestamp),source=r.source==='ticket-lab'?'Ticket Lab':'Full Draw';return `<div class="historyRow"><div class="historyIdx">#${drawHistory.length-i}</div><div><div class="historyNums">${sorted.join(' – ')}</div><div class="historyMeta">${r.game} · ${source} · ${when.toLocaleString()} · draw order ${(r.official?.white||[]).join(' → ')}</div></div><div class="historyBonus">${bonusLabel} ${r.official?.bonus ?? '—'}</div></div>`}).join('');
+  }
+  function historyText(){return drawHistory.slice().reverse().map((r,i)=>`${i+1}. ${historyTicketLine(r)} — ${r.game} — ${r.source==='ticket-lab'?'Ticket Lab':'Full Draw'} — ${new Date(r.timestamp).toLocaleString()}`).join('\n')}
+  async function copyHistory(){if(!drawHistory.length)return;try{await navigator.clipboard.writeText(historyText());$('historyCopyBtn').textContent='Copied';setTimeout(()=>$('historyCopyBtn').textContent='Copy all',900)}catch{}}
+  function csvEscape(v){const x=String(v??'');return /[",\n]/.test(x)?`"${x.replace(/"/g,'""')}"`:x}
+  function exportHistoryCsv(){if(!drawHistory.length)return;const rows=[['run','source','game','timestamp','white_sorted','draw_order','bonus','seed','main_machine','main_set','bonus_machine','bonus_set','main_load_order','bonus_load_order']];drawHistory.slice().reverse().forEach((r,i)=>rows.push([i+1,r.source||'full-draw',r.game,r.timestamp,[...(r.official.white||[])].sort((a,b)=>a-b).join('-'),(r.official.white||[]).join('-'),r.official.bonus,r.seed,r.equipment?.mainMachine,r.equipment?.mainSet,r.equipment?.bonusMachine,r.equipment?.bonusSet,(r.loading?.mainOrder||[]).join('-'),(r.loading?.bonusOrder||[]).join('-')]));downloadText(`lottery-draw-history-${Date.now()}.csv`,rows.map(row=>row.map(csvEscape).join(',')).join('\n'))}
+  function exportHistoryJson(){if(!drawHistory.length)return;downloadText(`lottery-draw-history-${Date.now()}.json`,JSON.stringify({version:'3.9',exportedAt:new Date().toISOString(),runs:drawHistory},null,2))}
+  function clearHistory(){if(!drawHistory.length)return;if(confirm('Clear all saved draw history from this browser?')){drawHistory=[];persistHistory();renderHistory()}}
+  function cryptoSeed(prefix='draw'){
+    try{const a=new Uint32Array(4);crypto.getRandomValues(a);return `${prefix}-${Array.from(a).map(x=>x.toString(16).padStart(8,'0')).join('')}`}
+    catch{return `${prefix}-${Date.now().toString(36)}-${Math.random().toString(36).slice(2)}`}
+  }
+  function equipmentForSeed(seed,gkey){const pr=PROFILES[gkey],rng=mulberry32(hashString(`${seed}|${gkey}|equipment`));return{mainMachine:alphaId(Math.floor(rng()*pr.machinePool)),mainSet:alphaId(Math.floor(rng()*pr.ballSetPool)),bonusMachine:alphaId(Math.floor(rng()*pr.machinePool)),bonusSet:alphaId(Math.floor(rng()*pr.ballSetPool))}}
+  function profileParams(gkey){const pr=PROFILES[gkey];if(gkey===game){const p=params();return{premix:p.premix,interval:p.interval,rpm:p.rpm,turb:p.turb,dwell:p.dwell,loadCadence:p.loadCadence,loadMode:p.loadMode}}return{premix:pr.premix,interval:pr.interval,rpm:pr.rpm,turb:pr.turbulence,dwell:pr.dwell,loadCadence:pr.loadCadence,loadMode:pr.defaultLoad}}
+  function physicalTicket(seed,gkey=game){
+    const pr=PROFILES[gkey],p=profileParams(gkey),eq=equipmentForSeed(seed,gkey),mc=document.createElement('canvas'),bc=document.createElement('canvas');mc.width=760;mc.height=590;bc.width=520;bc.height=590;
+    const m=new DrawMachine(mc,false),b=new DrawMachine(bc,true),mh=hashString(`${seed}|${gkey}|${eq.mainMachine}|${eq.mainSet}|official`),bh=hashString(`${seed}|${gkey}|${eq.bonusMachine}|${eq.bonusSet}|official`);
+    m.configure({n:pr.mainN,accent:pr.accent,rpm:p.rpm,turb:p.turb,capture:pr.capture,rng:mulberry32(mh^0xA53A9E37),loadMode:p.loadMode});
+    b.configure({n:pr.bonusN,accent:pr.bonusAccent,rpm:p.rpm,turb:p.turb,capture:pr.capture,rng:mulberry32(bh^0x71D3C24B),loadMode:p.loadMode});
+    const dt=1/120,advance=seconds=>{const steps=Math.max(1,Math.round(seconds/dt));for(let i=0;i<steps;i++){m.update(dt);b.update(dt)}};
+    simulateSequentialLoad(m,b,p.loadCadence,dt);m.mixOn=b.mixOn=true;advance(p.premix);const order=[];for(let k=0;k<5;k++){order.push(m.capture());if(k<4)advance(p.interval)};advance(Math.max(.35,p.dwell));const bonusBall=b.capture();
+    return{white:[...order].sort((a,b)=>a-b),drawOrder:order,bonus:bonusBall,seed,equipment:eq,parameters:p,loading:{mainOrder:[...m.loadSequence],bonusOrder:[...b.loadSequence]}};
+  }
+
+  async function physicalTicketCooperative(seed,gkey=game){
+    // Same deterministic 120Hz mechanical steps as physicalTicket, cooperatively scheduled.
+    const pr=PROFILES[gkey],p=profileParams(gkey),eq=equipmentForSeed(seed,gkey),mc=document.createElement('canvas'),bc=document.createElement('canvas');
+    mc.width=760;mc.height=590;bc.width=520;bc.height=590;
+    const m=new DrawMachine(mc,false),b=new DrawMachine(bc,true),mh=hashString(`${seed}|${gkey}|${eq.mainMachine}|${eq.mainSet}|official`),bh=hashString(`${seed}|${gkey}|${eq.bonusMachine}|${eq.bonusSet}|official`);
+    m.configure({n:pr.mainN,accent:pr.accent,rpm:p.rpm,turb:p.turb,capture:pr.capture,rng:mulberry32(mh^0xA53A9E37),loadMode:p.loadMode});
+    b.configure({n:pr.bonusN,accent:pr.bonusAccent,rpm:p.rpm,turb:p.turb,capture:pr.capture,rng:mulberry32(bh^0x71D3C24B),loadMode:p.loadMode});
+    const dt=1/120;
+    let stepsTotal=0;
+    const yieldIfNeeded=async()=>{if(++stepsTotal%90===0)await new Promise(resolve=>setTimeout(resolve,0))};
+    m.beginLoad(p.loadCadence);b.beginLoad(p.loadCadence);
+    for(let guard=0;(!m.loaded||!b.loaded)&&guard<20000;guard++){m.update(dt);b.update(dt);await yieldIfNeeded()}
+    m.mixOn=b.mixOn=true;
+    const advance=async(seconds)=>{const steps=Math.max(1,Math.round(seconds/dt));for(let i=0;i<steps;i++){m.update(dt);b.update(dt);await yieldIfNeeded()}};
+    await advance(p.premix);
+    const order=[];for(let k=0;k<5;k++){order.push(m.capture());if(k<4)await advance(p.interval)}
+    await advance(Math.max(.35,p.dwell));const bonusBall=b.capture();
+    return{white:[...order].sort((a,b)=>a-b),drawOrder:order,bonus:bonusBall,seed,equipment:eq,parameters:p,loading:{mainOrder:[...m.loadSequence],bonusOrder:[...b.loadSequence]}};
+  }
+
+  function saveTicketLineToHistory(r,gkey){
+    const pr=PROFILES[gkey];
+    saveHistoryRecord({version:'3.9',source:'ticket-lab',game:pr.name,timestamp:new Date().toISOString(),seed:r.seed,equipment:r.equipment,evidenceMode:'mechanical ticket simulation',parameters:r.parameters,loading:r.loading,pretests:[],official:{white:[...r.drawOrder],bonus:r.bonus}});
+  }
+  function persistLastTicketSet(){
+    if(!ticketSet.length)return;
+    storageWrite(LAST_TICKETS_KEY,JSON.stringify({game:ticketGame,generatedAt:new Date().toISOString(),lines:ticketSet}));
+  }
+  function restoreLastTicketSet(){
+    try{const raw=storageRead(LAST_TICKETS_KEY);if(!raw)return;const saved=JSON.parse(raw);if(!saved||!Array.isArray(saved.lines)||!saved.lines.length)return;ticketGame=saved.game||ticketGame;ticketSet=saved.lines;renderTicketSet(ticketSet,ticketGame);const s=$('ticketStatus');if(s){s.textContent=`Restored ${ticketSet.length} saved ticket lines from this device.`;s.className='tiny statusGood'}}catch{}
+  }
+  function tonightGameKey(d=new Date()){const wd=d.getDay();if(wd===2||wd===5)return'mm';if(wd===1||wd===3||wd===6)return'pb';let aheadPB=[1,3,6].map(x=>(x-wd+7)%7||7),aheadMM=[2,5].map(x=>(x-wd+7)%7||7);return Math.min(...aheadMM)<Math.min(...aheadPB)?'mm':'pb'}
+  function tonightText(){const g=tonightGameKey(),pr=PROFILES[g],d=new Date(),days=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];return `${days[d.getDay()]}: ${pr.name} profile selected for the next/tonight drawing. Ticket Lab uses ${pr.mainN} white balls + ${pr.bonusN} ${pr.bonusLabel} balls.`}
+  function switchGame(gkey){document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x.dataset.game===gkey));game=gkey;resetEquipment();configure();$('tonightBanner').textContent=tonightText()}
+  function renderTicketSet(lines,gkey){const pr=PROFILES[gkey],e=$('ticketResults');if(!lines.length){e.innerHTML='<div class="tiny">No ticket set generated yet.</div>';return}e.innerHTML=lines.map((r,i)=>`<div class="ticketLine"><div class="n">Ticket ${i+1} · ${pr.name}</div><div class="ticketNums">${r.white.map(n=>`<span class="miniBall">${n}</span>`).join('')}<span style="align-self:center;font-weight:900">+</span><span class="miniBall ${pr.bonusClass}">${r.bonus}</span></div><div class="ticketMeta">draw order ${r.drawOrder.join(' → ')}<br>seed ${r.seed.slice(-16)} · equipment ${r.equipment.mainMachine}/${r.equipment.mainSet} + ${r.equipment.bonusMachine}/${r.equipment.bonusSet}<br>load order saved (${r.loading?.mainOrder?.length||0}+${r.loading?.bonusOrder?.length||0})</div></div>`).join('')}
+  let ticketSet=[],ticketGame='mm';
+  async function generateMechanicalTickets(count=8,silent=false){
+    count=clamp(Math.floor(+count||1),1,20);ticketGame=game;ticketSet=[];const seen=new Set(),status=$('ticketStatus');if(!silent){status.textContent=`Running ${count} independent ${profile.name} machine simulations…`;status.className='tiny statusBusy'}
+    for(let i=0;i<count;i++){
+      let r,key,tries=0;do{r=await physicalTicketCooperative(cryptoSeed(`${ticketGame}-ticket-${i+1}`),ticketGame);key=`${r.white.join('-')}|${r.bonus}`;tries++}while(seen.has(key)&&tries<20);seen.add(key);ticketSet.push(r);saveTicketLineToHistory(r,ticketGame);persistLastTicketSet();if(!silent){renderTicketSet(ticketSet,ticketGame);status.textContent=`Completed ${i+1}/${count}… auto-saved`;await new Promise(res=>setTimeout(res,0))}
+    }
+    if(!silent){status.textContent=`Complete: ${count} unique mechanical ticket lines — saved automatically.`;status.className='tiny statusGood'}return ticketSet
+  }
+  function ticketText(){const pr=PROFILES[ticketGame];return ticketSet.map((r,i)=>`${i+1}. ${r.white.join(' - ')} | ${pr.bonusLabel} ${r.bonus}`).join('\n')}
+  async function copyTicketSet(){if(!ticketSet.length)return;try{await navigator.clipboard.writeText(ticketText());$('ticketStatus').textContent='Tickets copied.'}catch{$('ticketStatus').textContent='Copy blocked by browser; use Export tickets.'}}
+  function exportTicketSet(){if(!ticketSet.length)return;downloadText(`lottery-draw-lab-v3_9-${ticketGame}-tickets-${Date.now()}.json`,JSON.stringify({version:'3.9',game:PROFILES[ticketGame].name,generatedAt:new Date().toISOString(),lines:ticketSet},null,2))}
+  window.LotteryLab={physicalTicket,generateMechanicalTickets,profiles:PROFILES,getTicketSet:()=>ticketSet};
+
+  function tick(ts){const realdt=Math.min(.05,(ts-lastTS)/1000);lastTS=ts;const p=params();accum+=realdt*p.speed;const fixed=1/120;let guard=0;while(accum>=fixed&&guard<20){const active=main.loading||bonus.loading||main.loaded||bonus.loaded||auto;if(active){main.update(fixed);bonus.update(fixed);if(main.loading||bonus.loading||main.mixOn||bonus.mixOn||auto){simTime+=fixed;autoStep()}}accum-=fixed;guard++}$('simClock').textContent=simTime.toFixed(1)+'s'; if((Math.floor(ts/84)!==Math.floor((ts-realdt*1000)/84)) || auto || main.loading || bonus.loading || main.mixOn || bonus.mixOn){main.draw();bonus.draw()}requestAnimationFrame(tick)}
+
+  document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));b.classList.add('active');game=b.dataset.game;resetEquipment();configure()});
+  $('oneBtn').onclick=()=>oneButtonRun();$('protocolBtn').onclick=()=>runProtocol(false);$('loadBtn').onclick=()=>{resetAll(true);load()};$('mixBtn').onclick=startMix;$('drawBtn').onclick=drawNext;$('fullBtn').onclick=()=>fullDraw(false);$('newSeedBtn').onclick=()=>fullDraw(true);$('resetBtn').onclick=()=>{resetAll(true);resetEquipment();configureMachines()};
+  $('historyCopyBtn').onclick=copyHistory;$('historyCsvBtn').onclick=exportHistoryCsv;$('historyJsonBtn').onclick=exportHistoryJson;$('historyClearBtn').onclick=clearHistory;
+  $('exportBtn').onclick=()=>{const rec=officialRecord||makeRecord();downloadText(`lottery-draw-${game}-${Date.now()}.json`,JSON.stringify(rec,null,2));log('Exported current draw record JSON.')};
+  $('copyBtn').onclick=async()=>{try{await navigator.clipboard.writeText($('log').textContent);$('copyBtn').textContent='Copied';setTimeout(()=>$('copyBtn').textContent='Copy',900)}catch{}};
+  ['rpmInput','turbInput'].forEach(id=>$(id).addEventListener('change',()=>{const p=params();main.setParams(p.rpm,p.turb);bonus.setParams(p.rpm,p.turb)}));
+  $('tonightGameBtn').onclick=()=>switchGame(tonightGameKey());$('ticketRunBtn').onclick=()=>generateMechanicalTickets($('ticketCountInput').value);$('ticketCopyBtn').onclick=copyTicketSet;$('ticketExportBtn').onclick=exportTicketSet;
+  try {
+    loadHistory();configure();switchGame(tonightGameKey());restoreLastTicketSet();requestAnimationFrame(tick);
+    const boot = $('bootHint');
+    boot.className='bootHint ready';
+    boot.textContent='✓ Simulator ready — choose Powerball or Mega Millions, then tap ONE BUTTON to watch.';
+    document.querySelectorAll('.tab').forEach(t => t.addEventListener('click', () => {
+      boot.className='bootHint ready';
+      boot.textContent=`✓ ${PROFILES[game].name} selected — ONE BUTTON is ready.`;
+    }));
+  } catch (e) {
+    const boot=$('bootHint');
+    if(boot) {boot.className='bootHint error';boot.textContent=`Simulator failed to start: ${e&&e.message||e}. Please open in Safari, or report this message.`;}
+    console.error('Lottery Lab initialization error',e);
+  }
+  const qs=new URLSearchParams(location.search);if(qs.has('tickets'))setTimeout(()=>generateMechanicalTickets(clamp(+qs.get('tickets')||8,1,20)),80);
+  if(qs.has('selftest'))setTimeout(()=>{try{const a=physicalTicket('selftest-A',game),b=physicalTicket('selftest-B',game),valid=r=>r.white.length===5&&new Set(r.white).size===5&&r.white.every(n=>n>=1&&n<=profile.mainN)&&r.bonus>=1&&r.bonus<=profile.bonusN;const ok=valid(a)&&valid(b)&&JSON.stringify(a)===JSON.stringify(physicalTicket('selftest-A',game));$('selfTest').style.display='block';$('selfTest').textContent=ok?'SELFTEST PASS':'SELFTEST FAIL';document.body.dataset.selftest=ok?'PASS':'FAIL'}catch(e){document.body.dataset.selftest='FAIL';$('selfTest').style.display='block';$('selfTest').textContent='SELFTEST FAIL '+e.message}},120);
+})();
+</script>
+</body>
+</html>
