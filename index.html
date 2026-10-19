@@ -91,7 +91,7 @@ button,.tab{touch-action:manipulation;-webkit-tap-highlight-color:transparent}bu
           <div class="setting"><label>Turbulence <span class="confidence lab">model</span></label><input id="turbInput" type="number" min="0" max="2" step="0.05"></div>
           <div class="setting"><label>Capture dwell sec <span class="confidence lab">model</span></label><input id="dwellInput" type="number" min="0" max="2" step="0.05"></div>
           <div class="setting"><label>Playback speed</label><select id="speedInput"><option value="1" selected>1× realtime</option><option value="2">2×</option><option value="4">4×</option><option value="8">8×</option></select></div>
-          <div class="setting"><label>Load proxy <span class="confidence est">unknown</span></label><select id="loadMode"><option value="pbRack">Powerball custom: 50s → 20s → rest</option><option value="mmRandomRack">Mega random 8-rack proxy</option><option value="rack">Generic upper-rack release</option><option value="batch">Centered batch release</option><option value="scatter">Random chamber release</option></select></div>
+          <div class="setting"><label>Load proxy <span class="confidence est">unknown</span></label><select id="loadMode"><option value="pbRack">Powerball ascending: whites 1–69, red 1–26</option><option value="mmRandomRack">Mega random 8-rack proxy</option><option value="rack">Generic upper-rack release</option><option value="batch">Centered batch release</option><option value="scatter">Random chamber release</option></select></div>
           <div class="setting"><label>Ball load cadence sec <span class="confidence est">estimated</span></label><input id="loadCadenceInput" type="number" min="0.02" max="0.50" step="0.01"></div>
           <div class="setting"><label>Seed</label><input id="seedInput" type="text" value="Brent-2026-v3"></div>
           <div class="tiny">Published sources do not expose exact live-draw RPM, load geometry, chamber dimensions, or mix timing. v3.6 keeps those values visible and editable rather than implying false precision.</div>
@@ -178,16 +178,16 @@ button,.tab{touch-action:manipulation;-webkit-tap-highlight-color:transparent}bu
   };
   const PROFILES={
     pb:{
-      name:'Powerball',profile:'PB Halogen II — v3.8 custom-load preset',title:'Powerball — Halogen II mechanical replica',mainN:69,bonusN:26,bonusName:'Red Powerball machine',bonusClass:'pb',bonusLabel:'PB',capture:'shaft',
+      name:'Powerball',profile:'PB Halogen II — ordered-loading preset',title:'Powerball — Halogen II mechanical replica',mainN:69,bonusN:26,bonusName:'Red Powerball machine',bonusClass:'pb',bonusLabel:'PB',capture:'shaft',
       premix:7.0,interval:3.0,rpm:42,turbulence:.74,dwell:.30,loadCadence:.07,accent:'#5f9cff',bonusAccent:'#e33d50',defaultLoad:'pbRack',machinePool:4,ballSetPool:4,pretests:4,
       facts:[
-        ['Main matrix','5 of 69','pub'],['Bonus matrix','1 of 26','pub'],['Machine','Smartplay Halogen II','pub'],['Ball material','Solid foam','pub'],['Ball diameter','50 mm','pub'],['Mix','Dual counter-rotating arms','pub'],['Selection','Rising shaft / gravity-pick','pub'],['Chamber','Optical-grade acrylic','pub'],['Rack geometry','Custom sequence: 50s → 20s → rest','rep'],['Timing preset','7s / 3s proxy','est']
+        ['Main matrix','5 of 69','pub'],['Bonus matrix','1 of 26','pub'],['Machine','Smartplay Halogen II','pub'],['Ball material','Solid foam','pub'],['Ball diameter','50 mm','pub'],['Mix','Dual counter-rotating arms','pub'],['Selection','Rising shaft / gravity-pick','pub'],['Chamber','Optical-grade acrylic','pub'],['Loading sequence','White 1–69; red 1–26, one ball at a time','est'],['Timing preset','7s / 3s proxy','est']
       ],
       evidence:[
         ['Published','Powerball announced Halogen II machines and solid-foam balls beginning with the Sept. 30, 2020 drawing.',SOURCES.pbofficial],
         ['Published','Smartplay lists Halogen with 100-ball mix capacity, 50 mm foam balls, dual counter-rotating arms and optical-grade acrylic.',SOURCES.halogen],
         ['Published','Smartplay describes Halogen II as a gravity-pick machine with a mixing turntable and rising-shaft selection tube.',SOURCES.smartfaq],
-        ['Custom loading experiment','Powerball white-ball load order is intentionally overridden for tonight: 50–59 first, then 20–29, then all remaining white balls in ascending order. This is a user-directed simulation scenario, not a claim about the official MUSL loading procedure.',null],
+        ['Sequential loading preset','Powerball white balls load 1 through 69 in numeric order and red Powerballs load 1 through 26 in numeric order. This is the selected simulation procedure, not a claim that the official lottery loads its balls in this order.',null],
         ['Timing proxy','The 7-second initial mix / 3-second cadence preset is a visual/historical operating proxy, not a published current MUSL specification.',null],
         ['Unknown','Current public sources do not provide exact live RPM, chamber dimensions, current rack-release timing, friction/restitution or exact pre-test count.',null]
       ]
@@ -222,16 +222,9 @@ button,.tab{touch-action:manipulation;-webkit-tap-highlight-color:transparent}bu
     geom(){const w=this.canvas.width,h=this.canvas.height,R=Math.min(w*.39,h*.39);return{w,h,cx:w/2,cy:h*.48,R,gateY:h*.48+R*.85}}
     makeLoadOrder(){
       const order=Array.from({length:this.totalN},(_,i)=>i+1);
-      // v3.8 custom Powerball scenario requested for tonight:
-      // drop every white ball in the 50s first, then every white ball in the 20s,
-      // then release the remaining white balls in the normal ascending rack order.
-      // The red Powerball machine is intentionally left unchanged.
-      if(this.loadMode==='pbRack'&&!this.bonus&&this.totalN===69){
-        const fifties=order.filter(n=>n>=50&&n<=59);
-        const twenties=order.filter(n=>n>=20&&n<=29);
-        const rest=order.filter(n=>!(n>=50&&n<=59)&&!(n>=20&&n<=29));
-        return [...fifties,...twenties,...rest];
-      }
+      // Ascending, one-by-one Powerball loading in BOTH chambers:
+      // white 1..69, red 1..26. Game-specific default is locked for PB.
+      if(this.loadMode==='pbRack') return order;
       if(this.loadMode==='mmRandomRack'||this.loadMode==='scatter'||this.loadMode==='batch'){
         for(let i=order.length-1;i>0;i--){const j=Math.floor(this.rng()*(i+1));[order[i],order[j]]=[order[j],order[i]]}
       }
@@ -334,10 +327,10 @@ button,.tab{touch-action:manipulation;-webkit-tap-highlight-color:transparent}bu
   let game='pb',profile=PROFILES.pb,main=new DrawMachine($('mainCanvas')),bonus=new DrawMachine($('bonusCanvas'),true),phase='idle',simTime=0,lastTS=performance.now(),accum=0,auto=false,autoStage='idle',nextEvent=0,activeSeed='',results={main:[],bonus:null},equipment=null,pretests=[],officialRecord=null;
   function log(msg,cls=''){const e=$('log'),t=simTime.toFixed(2).padStart(7,' ');e.textContent+=`[${t}s] ${msg}\n`;e.scrollTop=e.scrollHeight}
   function setPhase(p){phase=p;$('phaseBadge').textContent=p.toUpperCase();$('globalStatus').textContent=`${profile.name}: ${p}`}
-  function params(){return{premix:+$('premixInput').value,interval:+$('intervalInput').value,rpm:+$('rpmInput').value,turb:+$('turbInput').value,dwell:+$('dwellInput').value,loadCadence:+$('loadCadenceInput').value,speed:+$('speedInput').value,seed:$('seedInput').value||'seed',loadMode:$('loadMode').value}}
+  function params(){return{premix:+$('premixInput').value,interval:+$('intervalInput').value,rpm:+$('rpmInput').value,turb:+$('turbInput').value,dwell:+$('dwellInput').value,loadCadence:+$('loadCadenceInput').value,speed:+$('speedInput').value,seed:$('seedInput').value||'seed',loadMode:game==='pb'?'pbRack':$('loadMode').value}}
   function reseed(seed,salt='official'){activeSeed=seed;const h=hashString(`${seed}|${game}|${salt}`);main.rng=mulberry32(h^0xA53A9E37);bonus.rng=mulberry32(h^0x71D3C24B);$('seedShown').textContent=seed.length>14?seed.slice(0,13)+'…':seed}
   function configureMachines(seed=params().seed,salt='official'){const p=params();reseed(seed,salt);main.configure({n:profile.mainN,accent:profile.accent,rpm:p.rpm,turb:p.turb,capture:profile.capture,rng:main.rng,loadMode:p.loadMode});bonus.configure({n:profile.bonusN,accent:profile.bonusAccent,rpm:p.rpm,turb:p.turb,capture:profile.capture,rng:bonus.rng,loadMode:p.loadMode})}
-  function configure(){profile=PROFILES[game];$('gameTitle').textContent=profile.title;$('profileName').textContent=profile.profile;$('mainCountLabel').textContent=`${profile.mainN} balls → draw 5`;$('bonusCountLabel').textContent=`${profile.bonusN} balls → draw 1`;$('bonusMachineLabel').textContent=profile.bonusName;$('premixInput').value=profile.premix;$('intervalInput').value=profile.interval;$('rpmInput').value=profile.rpm;$('turbInput').value=profile.turbulence;$('dwellInput').value=profile.dwell;$('loadCadenceInput').value=profile.loadCadence;$('loadMode').value=profile.defaultLoad;$('equipmentPoolInput').value=profile.machinePool;$('ballSetPoolInput').value=profile.ballSetPool;$('pretestCountInput').value=profile.pretests;
+  function configure(){profile=PROFILES[game];$('gameTitle').textContent=profile.title;$('profileName').textContent=profile.profile;$('mainCountLabel').textContent=`${profile.mainN} balls → draw 5`;$('bonusCountLabel').textContent=`${profile.bonusN} balls → draw 1`;$('bonusMachineLabel').textContent=profile.bonusName;$('premixInput').value=profile.premix;$('intervalInput').value=profile.interval;$('rpmInput').value=profile.rpm;$('turbInput').value=profile.turbulence;$('dwellInput').value=profile.dwell;$('loadCadenceInput').value=profile.loadCadence;$('loadMode').value=profile.defaultLoad;$('loadMode').disabled=(game==='pb');$('loadMode').title=game==='pb'?'Powerball whites and red Powerballs load in ascending numeric order.':'Mega Millions loading proxy (configurable).';$('equipmentPoolInput').value=profile.machinePool;$('ballSetPoolInput').value=profile.ballSetPool;$('pretestCountInput').value=profile.pretests;
     $('facts').innerHTML=profile.facts.map(([k,v,t])=>`<div>${k}</div><div>${v} <span class="confidence ${t}">${t==='pub'?'published':t==='rep'?'reported':'estimated'}</span></div>`).join('');$('evidence').innerHTML=profile.evidence.map(([tag,txt,url])=>`<p><b>${tag}:</b> ${txt}${url?` <a class="sourceLink" href="${url}" target="_blank">source ↗</a>`:''}</p>`).join('');resetAll(true);configureMachines()}
   function resetEquipment(){equipment=null;pretests=[];$('mainMachineId').textContent='not selected';$('mainSetId').textContent='not selected';$('bonusMachineId').textContent='not selected';$('bonusSetId').textContent='not selected';$('pretestsDone').textContent='0';$('equipmentShown').textContent='—'}
   function resetAll(clearLog=true,preserveOneButton=false){auto=false;autoStage='idle';simTime=0;accum=0;nextEvent=0;results={main:[],bonus:null};officialRecord=null;main.reset();bonus.reset();setPhase('idle');renderResults();$('simClock').textContent='0.0s';$('drawCount').textContent='0';const ob=$('oneBtn');if(ob&&!preserveOneButton){ob.disabled=false;ob.textContent='▶ ONE BUTTON — RUN EVERYTHING'}if(clearLog)$('log').textContent=''}
@@ -440,7 +433,7 @@ button,.tab{touch-action:manipulation;-webkit-tap-highlight-color:transparent}bu
 
   function saveTicketLineToHistory(r,gkey){
     const pr=PROFILES[gkey];
-    saveHistoryRecord({version:'3.9',source:'ticket-lab',game:pr.name,timestamp:new Date().toISOString(),seed:r.seed,equipment:r.equipment,evidenceMode:'mechanical ticket simulation',parameters:r.parameters,loading:r.loading,pretests:[],official:{white:[...r.drawOrder],bonus:r.bonus}});
+    saveHistoryRecord({version:'3.10',source:'ticket-lab',game:pr.name,timestamp:new Date().toISOString(),seed:r.seed,equipment:r.equipment,evidenceMode:'mechanical ticket simulation',parameters:r.parameters,loading:r.loading,pretests:[],official:{white:[...r.drawOrder],bonus:r.bonus}});
   }
   function persistLastTicketSet(){
     if(!ticketSet.length)return;
