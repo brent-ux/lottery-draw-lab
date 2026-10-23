@@ -181,7 +181,7 @@ button,.tab{touch-action:manipulation;-webkit-tap-highlight-color:transparent}bu
       name:'Powerball',profile:'PB Halogen II — staggered-rack experimental preset',title:'Powerball — Halogen II mechanical replica',mainN:69,bonusN:26,bonusName:'Red Powerball machine',bonusClass:'pb',bonusLabel:'PB',capture:'shaft',
       premix:7.0,interval:3.0,rpm:42,turbulence:.74,dwell:.30,loadCadence:.07,accent:'#5f9cff',bonusAccent:'#e33d50',defaultLoad:'pbRack',machinePool:4,ballSetPool:4,pretests:4,
       facts:[
-        ['Main matrix','5 of 69','pub'],['Bonus matrix','1 of 26','pub'],['Machine','Smartplay Halogen II','pub'],['Ball material','Solid foam','pub'],['Ball diameter','50 mm','pub'],['Mix','Dual counter-rotating arms','pub'],['Selection','Rising shaft / gravity-pick','pub'],['Chamber','Optical-grade acrylic','pub'],['Loading sequence','5-column staggered whites / 2-column red rack proxy','est'],['Timing preset','7s / 3s proxy','est']
+        ['Main matrix','5 of 69','pub'],['Bonus matrix','1 of 26','pub'],['Machine','Smartplay Halogen II','pub'],['Ball material','Solid foam','pub'],['Ball diameter','50 mm','pub'],['Mix','Dual counter-rotating arms','pub'],['Selection','Rising shaft / gravity-pick','pub'],['Chamber','Optical-grade acrylic','pub'],['Loading sequence','5-column staggered whites / 2-column red rack proxy','est'],['Pickup','Ball must contact shaft mouth; 2-D gate model','est'],['Timing preset','7s / 3s proxy','est']
       ],
       evidence:[
         ['Published','Powerball announced Halogen II machines and solid-foam balls beginning with the Sept. 30, 2020 drawing.',SOURCES.pbofficial],
@@ -190,6 +190,7 @@ button,.tab{touch-action:manipulation;-webkit-tap-highlight-color:transparent}bu
         ['Experimental rack release','Powerball white balls are staged in five numbered rack columns (1–14, 15–28, 29–42, 43–56, 57–69) with seeded interleaved releases. Red Powerballs use two numbered columns (1–13 and 14–26). The actual current studio release mechanism is not verified.',null],
         ['Compare modes','Calibration → Load proxy provides an ascending-order comparison. All generated runs preserve their load sequence in Saved Draw History.',null],
         ['Timing proxy','The 7-second initial mix / 3-second cadence preset is a visual/historical operating proxy, not a published current MUSL specification.',null],
+        ['Modeled mechanics','Counter-rotating paddle contact, ball-to-ball impacts, modeled gate capture and approximate gravity; still a 2-D representation.',null],
         ['Unknown','Current public sources do not provide exact live RPM, chamber dimensions, current rack-release timing, friction/restitution or exact pre-test count.',null]
       ]
     },
@@ -197,7 +198,7 @@ button,.tab{touch-action:manipulation;-webkit-tap-highlight-color:transparent}bu
       name:'Mega Millions',profile:'MM Criterion-style — staggered-rack experimental preset',title:'Mega Millions — Criterion-style mechanical replica',mainN:70,bonusN:24,bonusName:'Gold Mega Ball machine',bonusClass:'mm',bonusLabel:'MB',capture:'drop',
       premix:8.0,interval:4.0,rpm:40,turbulence:.78,dwell:.25,loadCadence:.07,accent:'#69a7ff',bonusAccent:'#f2c94c',defaultLoad:'mmStaggeredRack',machinePool:4,ballSetPool:7,pretests:4,
       facts:[
-        ['Main matrix','5 of 70','pub'],['Bonus matrix','1 of 24','pub'],['Draw location','WSB-TV, Atlanta','pub'],['Machine','Criterion II (reported)','rep'],['Criterion ball size','50 mm foam','pub'],['Mix','Counter-rotating arms','rep'],['Selection','Bottom gravity drop','rep'],['Official draw duration','< 60 sec','pub'],['Ball-set inventory','7 sets reported','rep'],['Load order','8-column white / 3-column gold staggered rack (experimental)','est']
+        ['Main matrix','5 of 70','pub'],['Bonus matrix','1 of 24','pub'],['Draw location','WSB-TV, Atlanta','pub'],['Machine','Criterion II (reported)','rep'],['Criterion ball size','50 mm foam','pub'],['Mix','Counter-rotating arms','rep'],['Selection','Bottom gravity drop','rep'],['Official draw duration','< 60 sec','pub'],['Ball-set inventory','7 sets reported','rep'],['Load order','8-column white / 3-column gold staggered rack (experimental)','est'],['Pickup','Ball must contact gravity exit mouth; 2-D gate model','est']
       ],
       evidence:[
         ['Published','Mega Millions says machines and ball sets are randomly selected, pre-tested and observed by lottery officials plus an independent auditor; the live drawing takes under 60 seconds.',SOURCES.mmsecurity],
@@ -206,6 +207,7 @@ button,.tab{touch-action:manipulation;-webkit-tap-highlight-color:transparent}bu
         ['Reported',"Criterion II is widely reported as Mega Millions' machine; the current official Mega Millions security page does not identify the model.",null],
         ['Experimental rack release','White balls are staged in eight ascending rack columns (1–9, 10–18, 19–27, 28–36, 37–45, 46–54, 55–63, 64–70). Gold Mega Balls use three columns (1–8, 9–16, 17–24). A seeded shuffle changes lane release order in each pass. This is a simulation model, not a verified live-loading procedure.',null],
         ['Compare modes','Calibration → Load proxy offers ascending numbered loading and a legacy fully shuffled order for comparison. Each run records its loading sequences.',null],
+        ['Modeled mechanics','Counter-rotating paddle contact, ball-to-ball impacts, modeled gravity exit and approximate gravity; factory dimensions and 3-D trajectories are unavailable.',null],
         ['Unknown','Current public sources do not disclose exact live RPM, chamber dimensions, precise load timing, current ball mass/friction/restitution, exact cadence or exact pre-test count.',null]
       ]
     }
@@ -219,7 +221,7 @@ button,.tab{touch-action:manipulation;-webkit-tap-highlight-color:transparent}bu
 
   class DrawMachine{
     constructor(canvas,bonus=false){this.canvas=canvas;this.ctx=canvas.getContext('2d');this.bonus=bonus;this.reset()}
-    reset(){this.balls=[];this.captured=[];this.loaded=false;this.loading=false;this.loadQueue=[];this.loadSequence=[];this.loadAccumulator=0;this.loadCadence=.07;this.mixOn=false;this.angleA=0;this.angleB=Math.PI/2;this.captureAnim=0;this.captureMode='drop';this.rng=Math.random;this.totalN=0;this.rpm=40;this.turb=.7;this.accent='#fff';this.loadMode='rack'}
+    reset(){this.balls=[];this.captured=[];this.loaded=false;this.loading=false;this.loadQueue=[];this.loadSequence=[];this.loadAccumulator=0;this.loadCadence=.07;this.mixOn=false;this.angleA=0;this.angleB=Math.PI/2;this.captureAnim=0;this.lastCaptured=null;this.gateOpen=false;this.gateCaught=null;this.captureMisses=0;this.captureMode='drop';this.rng=Math.random;this.totalN=0;this.rpm=40;this.turb=.7;this.accent='#fff';this.loadMode='rack'}
     configure({n,accent,rpm,turb,capture,rng,loadMode}){this.reset();this.totalN=n;this.accent=accent;this.rpm=rpm;this.turb=turb;this.captureMode=capture;this.rng=rng;this.loadMode=loadMode}
     geom(){const w=this.canvas.width,h=this.canvas.height,R=Math.min(w*.39,h*.39);return{w,h,cx:w/2,cy:h*.48,R,gateY:h*.48+R*.85}}
     makeLoadOrder(){
@@ -296,64 +298,116 @@ button,.tab{touch-action:manipulation;-webkit-tap-highlight-color:transparent}bu
       this.spawnNextBall();
     }
     setParams(rpm,turb){this.rpm=rpm;this.turb=turb}
-    update(dt){if(!this.loaded&&!this.loading&&!this.balls.length)return;const g=this.geom(),omega=this.rpm*Math.PI*2/60;
-      if(this.loading){this.loadAccumulator+=dt;while(this.loadAccumulator>=this.loadCadence&&this.loadQueue.length){this.loadAccumulator-=this.loadCadence;this.spawnNextBall()}}
+
+    update(dt){
+      if(!this.loaded&&!this.loading&&!this.balls.length)return;
+      const g=this.geom(),omega=this.rpm*Math.PI*2/60*(this.gateOpen&&this.captureMode==='shaft'?.65:1);
+      if(this.loading){
+        this.loadAccumulator+=dt;
+        while(this.loadAccumulator>=this.loadCadence&&this.loadQueue.length){
+          this.loadAccumulator-=this.loadCadence;this.spawnNextBall();
+        }
+      }
       if(this.mixOn){this.angleA+=omega*dt;this.angleB-=omega*dt*.94}
       this.captureAnim=Math.max(0,this.captureAnim-dt);
-      // v3.3: gravity is always present, but while MIXING the rotating arms now transfer
-      // their actual tangential motion into nearby balls.  This prevents the old
-      // "quiet pile at the bottom" behavior and makes the visible motion part of
-      // the same physics state used by capture().
-      const gravity=54;
       for(const b of this.balls){
-        b.vy+=gravity*dt;
+        b.vy+=54*dt;
         if(this.mixOn){
-          const dx=b.x-g.cx,dy=b.y-g.cy,rr=Math.hypot(dx,dy)+1;
-          // Broad recirculation field: keeps balls circulating between arm contacts.
-          const band=Math.sin((rr/g.R)*Math.PI*2.5+this.angleA*1.35),dir=band>=0?1:-1,swirl=235*this.turb*dir;
-          b.vx+=(-dy/rr)*swirl*dt;
-          b.vy+=(dx/rr)*swirl*dt;
-          // Mild lift in the lower half approximates the upward toss produced by the
-          // paddle/arm system in a 2-D model. It is deliberately symmetric in x.
-          const lower=clamp((b.y-g.cy)/(g.R*.78),0,1);
-          b.vy-=210*this.turb*lower*dt;
-          // Rotating-arm contact.  The blade point velocity is omega*r, so an arm hit
-          // gives a ball a real impulse instead of the tiny acceleration used in v3.2.
-          const bladeHit=(ang,omegaSigned)=>{
-            const ux=Math.cos(ang),uy=Math.sin(ang),nx=-uy,ny=ux;
-            const along=dx*ux+dy*uy,perp=dx*nx+dy*ny;
-            if(Math.abs(perp)<b.r*2.45&&Math.abs(along)<g.R*.80){
-              const bladeVn=omegaSigned*along;
-              const ballVn=b.vx*nx+b.vy*ny;
-              const delta=bladeVn-ballVn;
-              // Contact strength tapers at the edge of the blade thickness.
-              const contact=1-Math.min(1,Math.abs(perp)/(b.r*2.45));
-              const impulse=delta*(.72+.22*this.turb)*contact;
-              b.vx+=nx*impulse; b.vy+=ny*impulse;
-              // Small radial component helps balls leave the blade instead of riding it.
-              const sr=along>=0?1:-1;
-              b.vx+=ux*sr*38*this.turb*contact; b.vy+=uy*sr*38*this.turb*contact;
+          const dx=b.x-g.cx,dy=b.y-g.cy,rr=Math.hypot(dx,dy)+.001;
+          // Gentle circulation stands in for missing out-of-plane 3-D travel.
+          const band=Math.sin(rr/g.R*Math.PI*2.5+this.angleA*1.35);
+          const swirl=55*this.turb*(band>=0?1:-1);
+          b.vx+=(-dy/rr)*swirl*dt;b.vy+=(dx/rr)*swirl*dt;
+          const lower=clamp(dy/(g.R*.78),0,1);
+          b.vy-=105*this.turb*lower*dt;
+          if(this.captureMode==='shaft'){
+            b.vx+=(b.x>=g.cx?-1:1)*46*this.turb*lower*dt;
+            b.vy-=64*this.turb*lower*dt;
+          }
+          // Both visible paddles are capsule-like collision bodies.
+          // Their local contact velocity depends on radius and angular speed.
+          const paddle=(angle,spin)=>{
+            const ux=Math.cos(angle),uy=Math.sin(angle),reach=g.R*.73;
+            const along=clamp(dx*ux+dy*uy,-reach,reach);
+            const px=g.cx+along*ux,py=g.cy+along*uy;
+            const sx=b.x-px,sy=b.y-py,d=Math.hypot(sx,sy),radius=b.r+4.5;
+            if(d>=radius)return;
+            const side=(dx*(-uy)+dy*ux)>=0?1:-1;
+            const nx=d>.0001?sx/d:-uy*side,ny=d>.0001?sy/d:ux*side;
+            const correction=(radius-d)*.84;
+            b.x+=nx*correction;b.y+=ny*correction;
+            const pvx=-uy*spin*along,pvy=ux*spin*along;
+            const relative=(b.vx-pvx)*nx+(b.vy-pvy)*ny;
+            if(relative<0){
+              const impulse=-(1.6+.12*this.turb)*relative;
+              b.vx+=nx*impulse;b.vy+=ny*impulse;
             }
           };
-          bladeHit(this.angleA, omega);
-          bladeHit(this.angleB,-omega*.94);
-          // Tiny deterministic jitter breaks exact symmetries without choosing numbers.
-          b.vx+=(this.rng()-.5)*70*this.turb*dt;
-          b.vy+=(this.rng()-.5)*70*this.turb*dt;
+          paddle(this.angleA,omega);
+          paddle(this.angleB,-omega*.94);
+          b.vx+=(this.rng()-.5)*24*this.turb*dt;
+          b.vy+=(this.rng()-.5)*24*this.turb*dt;
         }
-        const drag=Math.pow(this.mixOn?.997:.993,dt*60);b.vx*=drag;b.vy*=drag;
-        const sp=Math.hypot(b.vx,b.vy),max=this.mixOn?520:320;if(sp>max){b.vx*=max/sp;b.vy*=max/sp}
+        const drag=Math.pow(this.mixOn?.997:.993,dt*60);
+        b.vx*=drag;b.vy*=drag;
+        const speed=Math.hypot(b.vx,b.vy),max=this.mixOn?520:320;
+        if(speed>max){b.vx*=max/speed;b.vy*=max/speed}
         b.x+=b.vx*dt;b.y+=b.vy*dt;
-        const dx2=b.x-g.cx,dy2=b.y-g.cy,d=Math.hypot(dx2,dy2),lim=g.R-b.r-4;
-        if(d>lim){const nx=dx2/d,ny=dy2/d;b.x=g.cx+nx*lim;b.y=g.cy+ny*lim;const vn=b.vx*nx+b.vy*ny;if(vn>0){b.vx-=1.88*vn*nx;b.vy-=1.88*vn*ny}}
+        const dx=b.x-g.cx,dy=b.y-g.cy,d=Math.hypot(dx,dy),lim=g.R-b.r-4;
+        if(d>lim){
+          const nx=dx/d,ny=dy/d;
+          b.x=g.cx+nx*lim;b.y=g.cy+ny*lim;
+          const vn=b.vx*nx+b.vy*ny;
+          if(vn>0){b.vx-=1.8*vn*nx;b.vy-=1.8*vn*ny}
+        }
       }
-      const arr=this.balls;for(let i=0;i<arr.length;i++)for(let j=i+1;j<arr.length;j++){const a=arr[i],b=arr[j],dx=b.x-a.x,dy=b.y-a.y,min=a.r+b.r,d2=dx*dx+dy*dy;if(d2>0&&d2<min*min){const d=Math.sqrt(d2),nx=dx/d,ny=dy/d,over=min-d;a.x-=nx*over*.5;a.y-=ny*over*.5;b.x+=nx*over*.5;b.y+=ny*over*.5;const rel=(b.vx-a.vx)*nx+(b.vy-a.vy)*ny;if(rel<0){const imp=-1.76*rel/2;a.vx-=imp*nx;a.vy-=imp*ny;b.vx+=imp*nx;b.vy+=imp*ny}}}
+      const balls=this.balls;
+      for(let i=0;i<balls.length;i++)for(let j=i+1;j<balls.length;j++){
+        const a=balls[i],b=balls[j],dx=b.x-a.x,dy=b.y-a.y,min=a.r+b.r,d2=dx*dx+dy*dy;
+        if(d2>0&&d2<min*min){
+          const d=Math.sqrt(d2),nx=dx/d,ny=dy/d,over=min-d;
+          a.x-=nx*over*.5;a.y-=ny*over*.5;
+          b.x+=nx*over*.5;b.y+=ny*over*.5;
+          const rel=(b.vx-a.vx)*nx+(b.vy-a.vy)*ny;
+          if(rel<0){const imp=-1.76*rel/2;a.vx-=imp*nx;a.vy-=imp*ny;b.vx+=imp*nx;b.vy+=imp*ny}
+        }
+      }
+      if(this.gateOpen&&this.gateCaught===null){
+        // A ball can exit ONLY when its body intersects the opened pickup mouth.
+        // Simultaneous contacts use the RNG to resolve sub-frame order.
+        const eligible=balls.filter(b=>Math.abs(b.x-g.cx)<Math.max(16,b.r*1.85)&&b.y+b.r>=g.gateY-b.r*.2);
+        if(eligible.length){
+          const ball=eligible[Math.floor(this.rng()*eligible.length)];
+          this.gateCaught=ball.n;this.lastCaptured=ball.n;
+          this.balls=balls.filter(b=>b!==ball);
+        }
+      }
     }
-    capture(){if(!this.loaded||!this.balls.length)return null;const g=this.geom();let best=null,bestScore=Infinity;for(const b of this.balls){const dx=Math.abs(b.x-g.cx)/(g.R||1),bottom=(g.cy+g.R-b.y)/(g.R||1),down=clamp(b.vy/260,-1,1);let score;if(this.captureMode==='shaft')score=dx*2.05+bottom*.72-down*.13;else score=dx*1.75+bottom*.84-down*.15;if(score<bestScore){bestScore=score;best=b}}
-      this.balls=this.balls.filter(x=>x!==best);this.captured.push(best.n);this.captureAnim=.45;return best.n}
+    capture(){
+      if(!this.loaded||!this.balls.length)return null;
+      this.gateOpen=true;this.gateCaught=null;
+      // Wait for a physical intake contact, never score or pick the nearest ball.
+      for(let i=0;i<1200&&this.gateCaught===null;i++)this.update(1/120);
+      this.gateOpen=false;
+      if(this.gateCaught===null){this.captureMisses++;return null}
+      const n=this.gateCaught;this.gateCaught=null;
+      this.captured.push(n);this.captureAnim=.82;
+      return n;
+    }
     draw(){const c=this.ctx,g=this.geom();c.clearRect(0,0,g.w,g.h);c.fillStyle='#081321';c.fillRect(0,0,g.w,g.h);const grad=c.createRadialGradient(g.cx-g.R*.23,g.cy-g.R*.28,g.R*.14,g.cx,g.cy,g.R);grad.addColorStop(0,'rgba(101,151,210,.20)');grad.addColorStop(.8,'rgba(35,64,103,.13)');grad.addColorStop(1,'rgba(6,14,26,.65)');c.beginPath();c.arc(g.cx,g.cy,g.R,0,Math.PI*2);c.fillStyle=grad;c.fill();c.lineWidth=7;c.strokeStyle='rgba(143,184,230,.56)';c.stroke();
-      const arm=(ang,color)=>{c.save();c.translate(g.cx,g.cy);c.rotate(ang);c.strokeStyle=color;c.lineWidth=9;c.lineCap='round';c.beginPath();c.moveTo(-g.R*.72,0);c.lineTo(g.R*.72,0);c.stroke();c.restore()};arm(this.angleA,'rgba(225,235,247,.44)');arm(this.angleB,'rgba(132,171,217,.43)');c.beginPath();c.arc(g.cx,g.cy,17,0,Math.PI*2);c.fillStyle='#9fb3ca';c.fill();
+      const arm=(ang,color)=>{c.save();c.translate(g.cx,g.cy);c.rotate(ang);c.strokeStyle=color;c.lineWidth=9;c.lineCap='round';c.beginPath();c.moveTo(-g.R*.73,0);c.lineTo(g.R*.73,0);c.stroke();c.lineWidth=15;c.strokeStyle='rgba(211,233,251,.5)';for(const side of [-1,1]){c.beginPath();c.moveTo(side*g.R*.56,-2);c.lineTo(side*g.R*.67,-2);c.stroke()}c.restore()};arm(this.angleA,'rgba(225,235,247,.44)');arm(this.angleB,'rgba(132,171,217,.43)');c.beginPath();c.arc(g.cx,g.cy,17,0,Math.PI*2);c.fillStyle='#9fb3ca';c.fill();
       if(this.captureMode==='shaft'){const rise=this.captureAnim>0?28:0;c.fillStyle='#aebfd1';c.fillRect(g.cx-13,g.gateY+3-rise,26,58+rise);c.fillStyle='#1d2d44';c.fillRect(g.cx-8,g.gateY-rise,16,11);c.fillStyle='rgba(143,184,230,.5)';c.fillText('RISING SHAFT',g.cx-42,g.h-20)}else{c.fillStyle='#aebfd1';c.fillRect(g.cx-g.R*.13,g.gateY,g.R*.26,12);c.fillStyle='#1d2d44';c.fillRect(g.cx-g.R*.08,g.gateY+2,g.R*.16,10);c.fillStyle='rgba(143,184,230,.5)';c.fillText('BOTTOM DROP',g.cx-38,g.h-20)}
+      // Show the modeled open gate and the collected ball moving to its exit.
+      c.strokeStyle=this.gateOpen?'#57e7b1':'rgba(153,202,244,.78)';c.lineWidth=this.gateOpen?5:3;
+      c.beginPath();c.moveTo(g.cx-26,g.gateY);c.lineTo(g.cx-9,g.gateY);c.moveTo(g.cx+9,g.gateY);c.lineTo(g.cx+26,g.gateY);c.stroke();
+      if(this.captureAnim>0&&this.lastCaptured!==null){
+        const t=1-this.captureAnim/.82;
+        const cy=this.captureMode==='shaft'?g.gateY-t*g.R*1.08:g.gateY+t*g.R*.35;
+        c.beginPath();c.arc(g.cx,cy,12,0,Math.PI*2);
+        c.fillStyle=this.bonus?this.accent:'#f5f7fb';c.fill();c.strokeStyle='#9fefff';c.lineWidth=2;c.stroke();
+        c.fillStyle='#14253a';c.font='700 11px ui-sans-serif,system-ui';c.textAlign='center';c.textBaseline='middle';
+        c.fillText(String(this.lastCaptured),g.cx,cy);
+      }
       for(const b of this.balls){c.beginPath();c.arc(b.x,b.y,b.r,0,Math.PI*2);c.fillStyle=this.bonus?this.accent:'#f5f7fb';c.strokeStyle=this.bonus?'rgba(255,255,255,.75)':'#cfd8e4';c.lineWidth=1.5;c.fill();c.stroke();c.fillStyle=this.bonus&&this.accent==='#f2c94c'?'#302500':(this.bonus?'#fff':'#1a2940');c.font=`700 ${Math.max(7,b.r*.87)}px ui-sans-serif,system-ui`;c.textAlign='center';c.textBaseline='middle';c.fillText(b.n,b.x,b.y)}
       c.fillStyle='rgba(220,232,247,.72)';c.font='12px ui-monospace,monospace';c.textAlign='left';c.fillText(`${this.balls.length}/${this.totalN} balls`,12,22);c.fillText(this.loading?`LOADING ${this.loadSequence.length}/${this.totalN}`:(this.mixOn?'MIXING':'MIX OFF'),12,40)
     }
@@ -385,7 +439,7 @@ button,.tab{touch-action:manipulation;-webkit-tap-highlight-color:transparent}bu
   async function oneButtonRun(){
     const b=$('oneBtn');if(auto||b.disabled)return;b.disabled=true;b.textContent='STARTING…';try{$('seedInput').value=cryptoSeed(`${game}-onebutton`);resetEquipment();await runProtocol(true);b.textContent='LOADING BALLS…';load();b.disabled=true;auto=true;autoStage='loading';setPhase('auto loading');const p=params();log(`ONE-BUTTON RUN: pre-tests complete; now loading balls one at a time at ${p.loadCadence.toFixed(2)}s/ball.`)}catch(err){auto=false;autoStage='idle';setPhase('error');log(`ERROR: ${err&&err.message?err.message:String(err)}`);b.disabled=false;b.textContent='▶ RETRY ONE-BUTTON RUN'}}
   function autoStep(){if(!auto)return;const p=params();if(autoStage==='loading'){if(main.loaded&&bonus.loaded){if(startMix()){autoStage='mixing';nextEvent=simTime+p.premix;setPhase('auto pre-mix');log(`Sequential load finished. Mixing for ${p.premix.toFixed(1)}s before first capture; cadence ${p.interval.toFixed(1)}s thereafter.`)}}return}if(autoStage==='mixing'&&simTime>=nextEvent){if(results.main.length<5){drawNext();nextEvent+=p.interval;setPhase(`auto main ${results.main.length}/5`)}else if(results.bonus==null)drawNext()}}
-  function makeRecord(){const p=params();return{version:'4.0',source:'full-draw',game:profile.name,timestamp:new Date().toISOString(),seed:activeSeed,equipment,evidenceMode:'published + reported + explicit estimates',parameters:{premixSeconds:p.premix,mainCadenceSeconds:p.interval,armRpm:p.rpm,turbulence:p.turb,captureDwellSeconds:p.dwell,loadProxy:p.loadMode,loadCadenceSeconds:p.loadCadence},loading:{mainOrder:[...main.loadSequence],bonusOrder:[...bonus.loadSequence]},pretests,official:{white:[...results.main],bonus:results.bonus}}}
+  function makeRecord(){const p=params();return{version:'4.1',source:'full-draw',game:profile.name,timestamp:new Date().toISOString(),seed:activeSeed,equipment,evidenceMode:'published + reported + explicit estimates',parameters:{premixSeconds:p.premix,mainCadenceSeconds:p.interval,armRpm:p.rpm,turbulence:p.turb,captureDwellSeconds:p.dwell,loadProxy:p.loadMode,loadCadenceSeconds:p.loadCadence},loading:{mainOrder:[...main.loadSequence],bonusOrder:[...bonus.loadSequence]},pretests,official:{white:[...results.main],bonus:results.bonus}}}
   const HISTORY_KEY='lotteryDrawLab.web.drawHistory';
   const HISTORY_BACKUP_KEY='lotteryDrawLab.web.drawHistory.backup';
   const LAST_TICKETS_KEY='lotteryDrawLab.web.lastTicketSet';
@@ -468,7 +522,7 @@ button,.tab{touch-action:manipulation;-webkit-tap-highlight-color:transparent}bu
 
   function saveTicketLineToHistory(r,gkey){
     const pr=PROFILES[gkey];
-    saveHistoryRecord({version:'4.0',source:'ticket-lab',game:pr.name,timestamp:new Date().toISOString(),seed:r.seed,equipment:r.equipment,evidenceMode:'mechanical ticket simulation',parameters:r.parameters,loading:r.loading,pretests:[],official:{white:[...r.drawOrder],bonus:r.bonus}});
+    saveHistoryRecord({version:'4.1',source:'ticket-lab',game:pr.name,timestamp:new Date().toISOString(),seed:r.seed,equipment:r.equipment,evidenceMode:'mechanical ticket simulation',parameters:r.parameters,loading:r.loading,pretests:[],official:{white:[...r.drawOrder],bonus:r.bonus}});
   }
   function persistLastTicketSet(){
     if(!ticketSet.length)return;
