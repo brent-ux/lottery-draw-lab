@@ -91,7 +91,7 @@ button,.tab{touch-action:manipulation;-webkit-tap-highlight-color:transparent}bu
           <div class="setting"><label>Turbulence <span class="confidence lab">model</span></label><input id="turbInput" type="number" min="0" max="2" step="0.05"></div>
           <div class="setting"><label>Capture dwell sec <span class="confidence lab">model</span></label><input id="dwellInput" type="number" min="0" max="2" step="0.05"></div>
           <div class="setting"><label>Playback speed</label><select id="speedInput"><option value="1" selected>1× realtime</option><option value="2">2×</option><option value="4">4×</option><option value="8">8×</option></select></div>
-          <div class="setting"><label>Load proxy <span class="confidence est">unknown</span></label><select id="loadMode"><option value="pbRack">Powerball: staggered 5-column rack (experimental)</option><option value="pbSequential">Powerball: ascending order (comparison)</option><option value="mmRandomRack">Mega random 8-rack proxy</option><option value="rack">Generic upper-rack release</option><option value="batch">Centered batch release</option><option value="scatter">Random chamber release</option></select></div>
+          <div class="setting"><label>Load proxy <span class="confidence est">unknown</span></label><select id="loadMode"><option value="pbRack">Powerball: staggered 5-column rack (experimental)</option><option value="pbSequential">Powerball: ascending order (comparison)</option><option value="mmStaggeredRack">Mega: staggered 8-column white / 3-column gold (experimental)</option><option value="mmSequential">Mega: ascending order (comparison)</option><option value="mmRandomRack">Mega: fully shuffled (legacy comparison)</option><option value="rack">Generic upper-rack release</option><option value="batch">Centered batch release</option><option value="scatter">Random chamber release</option></select></div>
           <div class="setting"><label>Ball load cadence sec <span class="confidence est">estimated</span></label><input id="loadCadenceInput" type="number" min="0.02" max="0.50" step="0.01"></div>
           <div class="setting"><label>Seed</label><input id="seedInput" type="text" value="Brent-2026-v3"></div>
           <div class="tiny">Published sources do not expose exact live-draw RPM, load geometry, chamber dimensions, or mix timing. v3.6 keeps those values visible and editable rather than implying false precision.</div>
@@ -194,17 +194,18 @@ button,.tab{touch-action:manipulation;-webkit-tap-highlight-color:transparent}bu
       ]
     },
     mm:{
-      name:'Mega Millions',profile:'MM Criterion-style — v3.8 evidence preset',title:'Mega Millions — Criterion-style mechanical replica',mainN:70,bonusN:24,bonusName:'Gold Mega Ball machine',bonusClass:'mm',bonusLabel:'MB',capture:'drop',
-      premix:8.0,interval:4.0,rpm:40,turbulence:.78,dwell:.25,loadCadence:.07,accent:'#69a7ff',bonusAccent:'#f2c94c',defaultLoad:'mmRandomRack',machinePool:4,ballSetPool:7,pretests:4,
+      name:'Mega Millions',profile:'MM Criterion-style — staggered-rack experimental preset',title:'Mega Millions — Criterion-style mechanical replica',mainN:70,bonusN:24,bonusName:'Gold Mega Ball machine',bonusClass:'mm',bonusLabel:'MB',capture:'drop',
+      premix:8.0,interval:4.0,rpm:40,turbulence:.78,dwell:.25,loadCadence:.07,accent:'#69a7ff',bonusAccent:'#f2c94c',defaultLoad:'mmStaggeredRack',machinePool:4,ballSetPool:7,pretests:4,
       facts:[
-        ['Main matrix','5 of 70','pub'],['Bonus matrix','1 of 24','pub'],['Draw location','WSB-TV, Atlanta','pub'],['Machine','Criterion II (reported)','rep'],['Criterion ball size','50 mm foam','pub'],['Mix','Counter-rotating arms','rep'],['Selection','Bottom gravity drop','rep'],['Official draw duration','< 60 sec','pub'],['Ball-set inventory','7 sets reported','rep'],['Load order','Random sequential-rack proxy','rep']
+        ['Main matrix','5 of 70','pub'],['Bonus matrix','1 of 24','pub'],['Draw location','WSB-TV, Atlanta','pub'],['Machine','Criterion II (reported)','rep'],['Criterion ball size','50 mm foam','pub'],['Mix','Counter-rotating arms','rep'],['Selection','Bottom gravity drop','rep'],['Official draw duration','< 60 sec','pub'],['Ball-set inventory','7 sets reported','rep'],['Load order','8-column white / 3-column gold staggered rack (experimental)','est']
       ],
       evidence:[
         ['Published','Mega Millions says machines and ball sets are randomly selected, pre-tested and observed by lottery officials plus an independent auditor; the live drawing takes under 60 seconds.',SOURCES.mmsecurity],
         ['Published / 2025 studio report','WSB-TV reported seven ball sets, frequent integrity testing, sealed storage and repeated test draws of five white balls plus one gold ball.',SOURCES.mmwsb],
         ['Manufacturer fact','Smartplay identifies Criterion II/III as lotto-style mechanical systems; Criterion uses 50 mm foam balls and counter-rotating mixing mechanisms.',SOURCES.criterion],
         ['Reported',"Criterion II is widely reported as Mega Millions' machine; the current official Mega Millions security page does not identify the model.",null],
-        ['Load proxy','Historical Georgia draw documentation/reporting described randomized rack loading. v3.8 randomizes the numbered loading sequence across an eight-column rack proxy, then releases balls one at a time so load order affects the physical state.',null],
+        ['Experimental rack release','White balls are staged in eight ascending rack columns (1–9, 10–18, 19–27, 28–36, 37–45, 46–54, 55–63, 64–70). Gold Mega Balls use three columns (1–8, 9–16, 17–24). A seeded shuffle changes lane release order in each pass. This is a simulation model, not a verified live-loading procedure.',null],
+        ['Compare modes','Calibration → Load proxy offers ascending numbered loading and a legacy fully shuffled order for comparison. Each run records its loading sequences.',null],
         ['Unknown','Current public sources do not disclose exact live RPM, chamber dimensions, precise load timing, current ball mass/friction/restitution, exact cadence or exact pre-test count.',null]
       ]
     }
@@ -240,6 +241,20 @@ button,.tab{touch-action:manipulation;-webkit-tap-highlight-color:transparent}bu
         }
         return interleaved;
       }
+      if(this.loadMode==='mmStaggeredRack'&&(this.totalN===70||this.totalN===24)){
+        const columnSize=this.bonus?8:9;
+        const columns=[];
+        for(let first=1;first<=this.totalN;first+=columnSize){
+          columns.push(order.slice(first-1,Math.min(this.totalN,first+columnSize-1)));
+        }
+        const interleaved=[];
+        while(columns.some(c=>c.length)){
+          const lanes=columns.map((col,i)=>col.length?i:-1).filter(i=>i!==-1);
+          for(let i=lanes.length-1;i>0;i--){const j=Math.floor(this.rng()*(i+1));[lanes[i],lanes[j]]=[lanes[j],lanes[i]]}
+          for(const lane of lanes) interleaved.push(columns[lane].shift());
+        }
+        return interleaved;
+      }
       if(this.loadMode==='mmRandomRack'||this.loadMode==='scatter'||this.loadMode==='batch'){
         for(let i=order.length-1;i>0;i--){const j=Math.floor(this.rng()*(i+1));[order[i],order[j]]=[order[j],order[i]]}
       }
@@ -251,6 +266,10 @@ button,.tab{touch-action:manipulation;-webkit-tap-highlight-color:transparent}bu
         const colSize=this.bonus?13:14;
         const col=Math.floor((n-1)/colSize),cols=this.bonus?2:5;
         x=g.cx-g.R*.56+(col/(cols-1))*g.R*1.12+(this.rng()-.5)*br*.20;
+      }else if(this.loadMode==='mmStaggeredRack'||this.loadMode==='mmSequential'){
+        const colSize=this.bonus?8:9,cols=this.bonus?3:8;
+        const col=Math.floor((n-1)/colSize);
+        x=g.cx-g.R*.60+(col/(cols-1))*g.R*1.20+(this.rng()-.5)*br*.22;
       }else if(this.loadMode==='mmRandomRack'){
         const col=index%8,cols=8;
         x=g.cx-g.R*.60+(col/(cols-1))*g.R*1.20+(this.rng()-.5)*br*.22;
@@ -346,7 +365,7 @@ button,.tab{touch-action:manipulation;-webkit-tap-highlight-color:transparent}bu
   function params(){return{premix:+$('premixInput').value,interval:+$('intervalInput').value,rpm:+$('rpmInput').value,turb:+$('turbInput').value,dwell:+$('dwellInput').value,loadCadence:+$('loadCadenceInput').value,speed:+$('speedInput').value,seed:$('seedInput').value||'seed',loadMode:$('loadMode').value}}
   function reseed(seed,salt='official'){activeSeed=seed;const h=hashString(`${seed}|${game}|${salt}`);main.rng=mulberry32(h^0xA53A9E37);bonus.rng=mulberry32(h^0x71D3C24B);$('seedShown').textContent=seed.length>14?seed.slice(0,13)+'…':seed}
   function configureMachines(seed=params().seed,salt='official'){const p=params();reseed(seed,salt);main.configure({n:profile.mainN,accent:profile.accent,rpm:p.rpm,turb:p.turb,capture:profile.capture,rng:main.rng,loadMode:p.loadMode});bonus.configure({n:profile.bonusN,accent:profile.bonusAccent,rpm:p.rpm,turb:p.turb,capture:profile.capture,rng:bonus.rng,loadMode:p.loadMode})}
-  function configure(){profile=PROFILES[game];$('gameTitle').textContent=profile.title;$('profileName').textContent=profile.profile;$('mainCountLabel').textContent=`${profile.mainN} balls → draw 5`;$('bonusCountLabel').textContent=`${profile.bonusN} balls → draw 1`;$('bonusMachineLabel').textContent=profile.bonusName;$('premixInput').value=profile.premix;$('intervalInput').value=profile.interval;$('rpmInput').value=profile.rpm;$('turbInput').value=profile.turbulence;$('dwellInput').value=profile.dwell;$('loadCadenceInput').value=profile.loadCadence;$('loadMode').value=profile.defaultLoad;$('loadMode').disabled=false;$('loadMode').title=game==='pb'?'Staggered rack is an experimental model; choose ascending for comparison.':'Mega Millions loading proxy (configurable).';$('equipmentPoolInput').value=profile.machinePool;$('ballSetPoolInput').value=profile.ballSetPool;$('pretestCountInput').value=profile.pretests;
+  function configure(){profile=PROFILES[game];$('gameTitle').textContent=profile.title;$('profileName').textContent=profile.profile;$('mainCountLabel').textContent=`${profile.mainN} balls → draw 5`;$('bonusCountLabel').textContent=`${profile.bonusN} balls → draw 1`;$('bonusMachineLabel').textContent=profile.bonusName;$('premixInput').value=profile.premix;$('intervalInput').value=profile.interval;$('rpmInput').value=profile.rpm;$('turbInput').value=profile.turbulence;$('dwellInput').value=profile.dwell;$('loadCadenceInput').value=profile.loadCadence;$('loadMode').value=profile.defaultLoad;$('loadMode').disabled=false;$('loadMode').title=game==='pb'?'Staggered rack is an experimental model; choose ascending for comparison.':'Mega Millions: staggered / ascending / randomized rack comparisons (experimental).';$('equipmentPoolInput').value=profile.machinePool;$('ballSetPoolInput').value=profile.ballSetPool;$('pretestCountInput').value=profile.pretests;
     $('facts').innerHTML=profile.facts.map(([k,v,t])=>`<div>${k}</div><div>${v} <span class="confidence ${t}">${t==='pub'?'published':t==='rep'?'reported':'estimated'}</span></div>`).join('');$('evidence').innerHTML=profile.evidence.map(([tag,txt,url])=>`<p><b>${tag}:</b> ${txt}${url?` <a class="sourceLink" href="${url}" target="_blank">source ↗</a>`:''}</p>`).join('');resetAll(true);configureMachines()}
   function resetEquipment(){equipment=null;pretests=[];$('mainMachineId').textContent='not selected';$('mainSetId').textContent='not selected';$('bonusMachineId').textContent='not selected';$('bonusSetId').textContent='not selected';$('pretestsDone').textContent='0';$('equipmentShown').textContent='—'}
   function resetAll(clearLog=true,preserveOneButton=false){auto=false;autoStage='idle';simTime=0;accum=0;nextEvent=0;results={main:[],bonus:null};officialRecord=null;main.reset();bonus.reset();setPhase('idle');renderResults();$('simClock').textContent='0.0s';$('drawCount').textContent='0';const ob=$('oneBtn');if(ob&&!preserveOneButton){ob.disabled=false;ob.textContent='▶ ONE BUTTON — RUN EVERYTHING'}if(clearLog)$('log').textContent=''}
