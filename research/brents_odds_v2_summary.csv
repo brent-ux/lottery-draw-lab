@@ -1,0 +1,23 @@
+game,rule_id,rule_name,white_combinations_excluded,white_share_pct,current_format_draws,current_format_observed,current_format_expected,training_draws,training_observed,training_expected,holdout_draws,holdout_observed,holdout_expected,source,statistical_status
+pb,adjacent,"Any adjacent pair",2978625,26.503729,1437,377,380.859,1077,292,285.445,360,85,95.413,https://data.ny.gov/en/Government-Finance/Lottery-Powerball-Winning-Numbers-Beginning-2010/d6yy-54nr,NOT VALIDATED
+pb,run3,"Run of 3+",139425,1.240600,1437,15,17.827,1077,12,13.361,360,3,4.466,https://data.ny.gov/en/Government-Finance/Lottery-Powerball-Winning-Numbers-Beginning-2010/d6yy-54nr,NOT VALIDATED
+pb,run4,"Run of 4+",4225,0.037594,1437,1,0.54,1077,1,0.405,360,0,0.135,https://data.ny.gov/en/Government-Finance/Lottery-Powerball-Winning-Numbers-Beginning-2010/d6yy-54nr,NOT VALIDATED
+pb,run5,"All five consecutive",65,0.000578,1437,0,0.008,1077,0,0.006,360,0,0.002,https://data.ny.gov/en/Government-Finance/Lottery-Powerball-Winning-Numbers-Beginning-2010/d6yy-54nr,NOT VALIDATED
+pb,span9,"Span ≤9",7686,0.068390,1437,0,0.983,1077,0,0.737,360,0,0.246,https://data.ny.gov/en/Government-Finance/Lottery-Powerball-Winning-Numbers-Beginning-2010/d6yy-54nr,NOT VALIDATED
+pb,span14,"Span ≤14",57057,0.507692,1437,9,7.296,1077,7,5.468,360,2,1.828,https://data.ny.gov/en/Government-Finance/Lottery-Powerball-Winning-Numbers-Beginning-2010/d6yy-54nr,NOT VALIDATED
+pb,monoParity,"All odd or even",602888,5.364482,1437,79,77.088,1077,54,57.775,360,25,19.312,https://data.ny.gov/en/Government-Finance/Lottery-Powerball-Winning-Numbers-Beginning-2010/d6yy-54nr,NOT VALIDATED
+pb,monoHalf,"Same half",602888,5.364482,1437,86,77.088,1077,77,57.775,360,9,19.312,https://data.ny.gov/en/Government-Finance/Lottery-Powerball-Winning-Numbers-Beginning-2010/d6yy-54nr,NOT VALIDATED
+pb,fourBand,"4+ in one ten-number band",83538,0.743319,1437,10,10.681,1077,9,8.006,360,1,2.676,https://data.ny.gov/en/Government-Finance/Lottery-Powerball-Winning-Numbers-Beginning-2010/d6yy-54nr,NOT VALIDATED
+pb,tripleEnding,"3+ same final digit",655395,5.831688,1437,78,83.801,1077,57,62.807,360,21,20.994,https://data.ny.gov/en/Government-Finance/Lottery-Powerball-Winning-Numbers-Beginning-2010/d6yy-54nr,NOT VALIDATED
+pb,extremeSum,"Extreme total",634308,5.644056,1437,77,81.105,1077,64,60.786,360,13,20.319,https://data.ny.gov/en/Government-Finance/Lottery-Powerball-Winning-Numbers-Beginning-2010/d6yy-54nr,NOT VALIDATED
+mm,adjacent,"Any adjacent pair",3166086,26.159484,170,41,44.471,127,33,33.223,43,8,11.249,https://data.ny.gov/Government-Finance/Lottery-Mega-Millions-Winning-Numbers-Beginning-20/5xaw-6ayf,NOT VALIDATED
+mm,run3,"Run of 3+",145926,1.205700,170,0,2.05,127,0,1.531,43,0,0.518,https://data.ny.gov/Government-Finance/Lottery-Mega-Millions-Winning-Numbers-Beginning-20/5xaw-6ayf,NOT VALIDATED
+mm,run4,"Run of 4+",4356,0.035991,170,0,0.061,127,0,0.046,43,0,0.015,https://data.ny.gov/Government-Finance/Lottery-Mega-Millions-Winning-Numbers-Beginning-20/5xaw-6ayf,NOT VALIDATED
+mm,run5,"All five consecutive",66,0.000545,170,0,0.001,127,0,0.001,43,0,0,https://data.ny.gov/Government-Finance/Lottery-Mega-Millions-Winning-Numbers-Beginning-20/5xaw-6ayf,NOT VALIDATED
+mm,span9,"Span ≤9",7812,0.064546,170,0,0.11,127,0,0.082,43,0,0.028,https://data.ny.gov/Government-Finance/Lottery-Mega-Millions-Winning-Numbers-Beginning-20/5xaw-6ayf,NOT VALIDATED
+mm,span14,"Span ≤14",58058,0.479699,170,0,0.815,127,0,0.609,43,0,0.206,https://data.ny.gov/Government-Finance/Lottery-Mega-Millions-Winning-Numbers-Beginning-20/5xaw-6ayf,NOT VALIDATED
+mm,monoParity,"All odd or even",649264,5.364482,170,14,9.12,127,12,6.813,43,2,2.307,https://data.ny.gov/Government-Finance/Lottery-Mega-Millions-Winning-Numbers-Beginning-20/5xaw-6ayf,NOT VALIDATED
+mm,monoHalf,"Same half",649264,5.364482,170,7,9.12,127,6,6.813,43,1,2.307,https://data.ny.gov/Government-Finance/Lottery-Mega-Millions-Winning-Numbers-Beginning-20/5xaw-6ayf,NOT VALIDATED
+mm,fourBand,"4+ in one ten-number band",89964,0.743319,170,0,1.264,127,0,0.944,43,0,0.32,https://data.ny.gov/Government-Finance/Lottery-Mega-Millions-Winning-Numbers-Beginning-20/5xaw-6ayf,NOT VALIDATED
+mm,tripleEnding,"3+ same final digit",705810,5.831688,170,13,9.914,127,10,7.406,43,3,2.508,https://data.ny.gov/Government-Finance/Lottery-Mega-Millions-Winning-Numbers-Beginning-20/5xaw-6ayf,NOT VALIDATED
+mm,extremeSum,"Extreme total",726474,6.002422,170,10,10.204,127,7,7.623,43,3,2.581,https://data.ny.gov/Government-Finance/Lottery-Mega-Millions-Winning-Numbers-Beginning-20/5xaw-6ayf,NOT VALIDATED
