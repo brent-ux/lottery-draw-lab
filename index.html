@@ -177,6 +177,11 @@ button,.tab{touch-action:manipulation;-webkit-tap-highlight-color:transparent}bu
       <div class="bo-buttons" id="boPresetButtons"><button type="button" data-preset="rare">Rare (~11%)</button><button type="button" data-preset="broad">Broad (~36%)</button><button type="button" data-preset="deep">Deep (~63%)</button><button type="button" data-preset="maximum">Maximum (~77%)</button><button id="boClear" type="button">Clear all</button><a href="research/brents_odds_5yr_v3_summary.csv" download>Download original 110-rule CSV</a></div>
       <div id="boFilters" class="bo-filters">Loading audit…</div>
       <div id="boHistory" class="bo-history">Loading historical comparisons…</div>
+      <details class="bo-foot" open><summary style="font-weight:600;color:#c8dbf4;cursor:pointer;margin:12px 0">Exactly what each selected rule contributes</summary>
+        <div class="bo-table-scroll"><table class="bo-table"><thead><tr><th>Selected exclusion</th><th>Unique outcomes this rule adds</th><th>Recent-year winners additionally excluded</th></tr></thead>
+          <tbody id="boMarginal"><tr><td colspan="3">Loading…</td></tr></tbody></table></div>
+        <div class="bo-foot">Marginal counts mean what would be restored if you switched just this one rule off while leaving the others on. They are not additive where several rules overlap.</div>
+      </details>
       <h3>33 interactive filters — ranked by theoretical rarity</h3>
       <div class="bo-table-scroll"><table class="bo-table"><thead><tr><th>Pattern</th><th>Share of combinations</th><th>Historical hits</th><th>Random expectation</th></tr></thead><tbody id="boRows"></tbody></table></div>
       <details class="bo-foot" style="margin-top:16px"><summary style="cursor:pointer;color:#91bfff;font-weight:600">Open all 110 earlier candidate tests (plus 4,960 interaction tests)</summary><div class="bo-foot">Additional <a href="research/brents_odds_2way_3way_v4.json">two- and three-rule interaction analysis</a> · <a href="research/brents_odds_v4_presets.json">four preset trade-off tables</a></div><div class="bo-table-scroll" style="margin-top:10px"><table class="bo-table"><thead><tr><th>Candidate exclusion</th><th>Theoretical share</th><th>Observed (5 years)</th><th>Expected by chance</th></tr></thead><tbody id="boCatalogRows"></tbody></table></div></details>
@@ -730,6 +735,16 @@ button,.tab{touch-action:manipulation;-webkit-tap-highlight-color:transparent}bu
     $('boPercent').textContent=suffix(p,3);
     $('boRemoved').textContent=fmt(pop.removed*g.bonus)+' complete combinations removed';
     $('boHistory').innerHTML='<b>Five-year audit: '+(game==='pb'?'Powerball':'Mega Millions')+'</b><div>Earlier four years: <b>'+train+' of '+g.train_n+'</b> historical winning draws excluded, compared with <b>'+(g.train_n*p).toFixed(1)+'</b> expected if draws are fair.<br>Most recent year: <b>'+hold+' of '+g.hold_n+'</b> historical winning draws excluded, compared with <b>'+(g.hold_n*p).toFixed(1)+'</b> expected if draws are fair.</div><div class="tiny">Each retained ticket still has the original jackpot probability. Lower filtered pool size is not an improvement in real odds. This comparison does not establish that any eliminated structure is mechanically impossible.</div>';
+    const selectedList=[...chosen].map(id=>[...research.core,...research.special].find(r=>r.id===id)).filter(Boolean);
+    const rows=selectedList.map(r=>{
+      chosen.delete(r.id);
+      const without=selection();
+      const smaller=population(g,without),recent=observed(g.hold,without);
+      chosen.add(r.id);
+      return{label:r.label,extra:(pop.removed-smaller.removed)*g.bonus,miss:hold-recent}
+    }).sort((a,b)=>b.extra-a.extra);
+    $('boMarginal').innerHTML=rows.length?rows.map(x=>'<tr><td>'+x.label+'</td><td>'+fmt(x.extra)+'</td><td>'+x.miss+'</td></tr>').join(''):'<tr><td colspan="3">No exclusion rules currently selected.</td></tr>';
+
     const allRules=[...research.core,...research.special];
     const info=allRules.map(rule=>({rule,stats:filterStats(g,rule)}));
     $('boFilters').innerHTML=info.map(({rule,stats})=>'<label class="bo-filter"><input type="checkbox" data-rule="'+rule.id+'" '+(chosen.has(rule.id)?'checked':'')+'><div><b>'+rule.label+'</b><small>'+suffix(stats.p,stats.p<.00001?6:3)+' of combinations · '+(stats.train+stats.hold)+' of '+g.draws+' historical draws</small></div></label>').join('');
