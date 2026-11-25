@@ -13,6 +13,23 @@
 .bootHint{padding:9px 13px;font-size:12px;background:#482817;color:#ffe2b7;border:1px solid #8d5c34;border-radius:9px;margin:-7px 0 13px}.bootHint.ready{background:#102e26;color:#afe7cc;border-color:#235943}.bootHint.error{background:#4a2026;color:#ffe0e3;border-color:#b95362}.bootHint code{font-size:11px} .runHistory{border-top:1px solid var(--line);padding:10px 13px;background:#0a1626}.historyHead{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px}.historyHead strong{font-size:12px}.historyHead .spacer{flex:1}.historyHead button{padding:5px 8px;font-size:10px}.historyList{display:grid;gap:6px;max-height:245px;overflow:auto}.historyRow{display:grid;grid-template-columns:46px 1fr auto;gap:9px;align-items:center;background:#0d192a;border:1px solid #263951;border-radius:8px;padding:7px 9px}.historyIdx{font-size:10px;color:#7890ad;font-weight:800}.historyNums{font-size:12px;font-weight:850;letter-spacing:.01em}.historyMeta{font-size:9px;color:#7f96b3;margin-top:2px}.historyBonus{font-size:11px;font-weight:900;white-space:nowrap}.historyEmpty{font-size:10px;color:var(--muted);padding:5px 0}@media(max-width:560px){.historyRow{grid-template-columns:34px 1fr}.historyBonus{grid-column:2}.historyList{max-height:310px}}
 button,.tab{touch-action:manipulation;-webkit-tap-highlight-color:transparent}button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid #9fc8ff;outline-offset:2px}
 @media(max-width:860px){.machines{grid-template-columns:1fr}.tabs .tab{min-height:46px;flex:1}.ticketTop button{min-height:44px}.wrap{padding:10px}}
+
+.bo-panel{margin:16px 0;background:#101c2e;border:1px solid #2d4260;border-radius:14px;overflow:hidden}
+.bo-head{background:#142640;padding:15px;display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap}
+.bo-head h2{margin:0 0 6px;font-size:22px}.bo-body{padding:14px}
+.bo-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.bo-stat{border:1px solid #2b405d;border-radius:9px;background:#0c192b;padding:12px}
+.bo-stat small,.bo-stat span{display:block;color:#9db2ce;font-size:11px}.bo-stat strong{font-size:21px;display:block;margin:7px 0;font-variant-numeric:tabular-nums}
+.bo-warning{border-left:3px solid #e6ae57;background:#30291c;padding:10px;margin:11px 0;font-size:12px;line-height:1.6}
+.bo-buttons{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:11px 0}.bo-buttons a,.bo-foot a{color:#91bfff;font-size:12px}
+.bo-filters{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.bo-filter{display:flex;align-items:flex-start;gap:8px;border:1px solid #2b405d;border-radius:8px;padding:9px;font-size:12px;line-height:1.4}
+.bo-filter input{width:17px;height:17px;flex-shrink:0;accent-color:#4b93ff;margin:0}.bo-filter small{color:#98abc7;display:block}
+.bo-history{border:1px solid #2b405d;border-radius:8px;margin:12px 0;padding:11px;font-size:12px;line-height:1.7}
+.bo-table-scroll{overflow:auto}.bo-table{width:100%;min-width:560px;border-collapse:collapse;font-size:12px}.bo-table td,.bo-table th{padding:9px;border-bottom:1px solid #2b405d;text-align:left}.bo-table th{color:#adc6e7}
+.bo-foot{font-size:11px;color:#9db2ce;line-height:1.6;margin-top:10px}
+.bo-optin{display:flex;align-items:center;gap:7px;margin:12px 0;padding:9px;border:1px dashed #436487;border-radius:8px;font-size:12px}.bo-optin input{width:17px;height:17px}
+@media(max-width:700px){.bo-stats,.bo-filters{grid-template-columns:1fr}.bo-stat strong{font-size:19px}}
 </style>
 </head>
 <body>
@@ -141,11 +158,30 @@ button,.tab{touch-action:manipulation;-webkit-tap-highlight-color:transparent}bu
         <span id="ticketStatus" class="tiny">Ready.</span>
       </div>
       <div class="calNote">Ticket Lab runs a fresh independent machine state for every line using the active game's mechanical profile, including the same sequential ball-by-ball loading phase used by the visualizer. Every generated line is auto-saved immediately to Saved Draw History and the latest ticket set is restored after a reload/screen change. It does not use hot/cold history or favorite numbers. White balls are displayed in ticket order (sorted); draw order and seed are retained in the metadata/export.</div>
+      <label class="bo-optin"><input type="checkbox" id="boApplyTickets" disabled><span><b>Apply selected Brent's Odds filters to generated tickets</b> (optional; off by default, may exclude future winners)</span></label>
       <div id="ticketResults" class="ticketGrid"><div class="tiny">No ticket set generated yet.</div></div>
       <div id="selfTest" class="tiny" style="display:none"></div>
     </div>
   </div>
 
+
+  <section id="boPanel" class="bo-panel">
+    <div class="bo-head"><div><h2>Brent's Odds 2.0</h2><div class="tiny">Exhaustive 5-number audit · 11 exploratory rules · historical validation</div></div><div class="setting"><label>Game</label><select id="boGame"><option value="pb">Powerball</option><option value="mm">Mega Millions</option></select></div></div>
+    <div class="bo-body">
+      <div class="bo-stats">
+        <div class="bo-stat"><small>Official jackpot combinations</small><strong id="boOriginal">—</strong><span>Original possible outcomes</span></div>
+        <div class="bo-stat"><small>Brent's remaining pool</small><strong id="boRemaining">—</strong><span>Exclusions combined without double-counting</span></div>
+        <div class="bo-stat"><small>Possible outcomes removed</small><strong id="boPercent">—</strong><span id="boRemoved">—</span></div>
+      </div>
+      <div class="bo-warning"><strong>Important:</strong> Brent's Odds describes your reduced <em>playing pool</em>, not improved real jackpot odds. Every excluded combination may still win. No tested rule has established a predictive advantage.</div>
+      <div class="bo-buttons"><button id="boPreset" type="button">Explore rare-pattern preset</button><button id="boClear" type="button">Clear all</button><a href="research/brents_odds_v2_summary.csv" download>Download full audit CSV</a></div>
+      <div id="boFilters" class="bo-filters">Loading audit…</div>
+      <div id="boHistory" class="bo-history">Loading historical comparisons…</div>
+      <h3>Candidate filters — ranked by rarity</h3>
+      <div class="bo-table-scroll"><table class="bo-table"><thead><tr><th>Pattern</th><th>Share of combinations</th><th>Historical hits</th><th>Random expectation</th></tr></thead><tbody id="boRows"></tbody></table></div>
+      <div class="bo-foot">Current matrix periods: Powerball October 2015 onward, Mega Millions April 2025 onward. The most recent quarter of drawings is held out separately. Different historical matrices are not pooled for probability comparisons. <a href="research/brents_odds_v2.json">Full enumeration and historical mask data</a>.</div>
+    </div>
+  </section>
   <div class="footer">Model boundary: this is a deterministic, seedable 2D mechanical-process simulation, not certified lottery equipment and not a forecasting method. Every numbered ball uses the same simulated material/physics; only its number and starting state differ. Published facts, reported details and lab proxies are identified separately. Exact proprietary operating parameters that are not public remain editable rather than being presented as measured facts.</div>
 </div>
 <script>
@@ -536,16 +572,33 @@ button,.tab{touch-action:manipulation;-webkit-tap-highlight-color:transparent}bu
   function switchGame(gkey){document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x.dataset.game===gkey));game=gkey;resetEquipment();configure();$('tonightBanner').textContent=tonightText()}
   function renderTicketSet(lines,gkey){const pr=PROFILES[gkey],e=$('ticketResults');if(!lines.length){e.innerHTML='<div class="tiny">No ticket set generated yet.</div>';return}e.innerHTML=lines.map((r,i)=>`<div class="ticketLine"><div class="n">Ticket ${i+1} · ${pr.name}</div><div class="ticketNums">${r.white.map(n=>`<span class="miniBall">${n}</span>`).join('')}<span style="align-self:center;font-weight:900">+</span><span class="miniBall ${pr.bonusClass}">${r.bonus}</span></div><div class="ticketMeta">draw order ${r.drawOrder.join(' → ')}<br>seed ${r.seed.slice(-16)} · equipment ${r.equipment.mainMachine}/${r.equipment.mainSet} + ${r.equipment.bonusMachine}/${r.equipment.bonusSet}<br>load order saved (${r.loading?.mainOrder?.length||0}+${r.loading?.bonusOrder?.length||0})</div></div>`).join('')}
   let ticketSet=[],ticketGame='mm';
+
   async function generateMechanicalTickets(count=8,silent=false){
-    count=clamp(Math.floor(+count||1),1,20);ticketGame=game;ticketSet=[];const seen=new Set(),status=$('ticketStatus');if(!silent){status.textContent=`Running ${count} independent ${profile.name} machine simulations…`;status.className='tiny statusBusy'}
+    count=clamp(Math.floor(+count||1),1,20);ticketGame=game;ticketSet=[];
+    const seen=new Set(),status=$('ticketStatus'),bo=window.BrentOdds;
+    const bits=$('boApplyTickets').checked&&bo&&bo.loaded?bo.getBits():0;
+    let rejected=0,shortfall=false;
+    if(!silent){status.textContent='Running '+count+' '+profile.name+' machine simulations…';status.className='tiny statusBusy'}
     for(let i=0;i<count;i++){
-      let r,key,tries=0;do{r=await physicalTicketCooperative(cryptoSeed(`${ticketGame}-ticket-${i+1}`),ticketGame);key=`${r.white.join('-')}|${r.bonus}`;tries++}while(seen.has(key)&&tries<20);seen.add(key);ticketSet.push(r);saveTicketLineToHistory(r,ticketGame);persistLastTicketSet();if(!silent){renderTicketSet(ticketSet,ticketGame);status.textContent=`Completed ${i+1}/${count}… auto-saved`;await new Promise(res=>setTimeout(res,0))}
+      let r=null,key='',accepted=false;
+      for(let attempt=0;attempt<80;attempt++){
+        r=await physicalTicketCooperative(cryptoSeed(ticketGame+'-ticket-'+(i+1)),ticketGame);
+        if(!r||r.white.some(x=>!Number.isInteger(x))||!Number.isInteger(r.bonus))continue;
+        key=r.white.join('-')+'|'+r.bonus;
+        if(seen.has(key))continue;
+        if(bits&&bo.rejects(r.white,bits,ticketGame)){rejected++;continue}
+        accepted=true;break;
+      }
+      if(!accepted){shortfall=true;break}
+      seen.add(key);ticketSet.push(r);saveTicketLineToHistory(r,ticketGame);persistLastTicketSet();
+      if(!silent){renderTicketSet(ticketSet,ticketGame);status.textContent='Completed '+(i+1)+'/'+count+'; screened '+rejected+' ticket lines';await new Promise(res=>setTimeout(res,0))}
     }
-    if(!silent){status.textContent=`Complete: ${count} unique mechanical ticket lines — saved automatically.`;status.className='tiny statusGood'}return ticketSet
+    if(!silent){status.textContent='Complete: '+ticketSet.length+'/'+count+' unique lines; '+rejected+' lines excluded.'+(shortfall?' Filters too restrictive.':'');status.className=shortfall?'tiny statusBusy':'tiny statusGood'}
+    return ticketSet
   }
   function ticketText(){const pr=PROFILES[ticketGame];return ticketSet.map((r,i)=>`${i+1}. ${r.white.join(' - ')} | ${pr.bonusLabel} ${r.bonus}`).join('\n')}
   async function copyTicketSet(){if(!ticketSet.length)return;try{await navigator.clipboard.writeText(ticketText());$('ticketStatus').textContent='Tickets copied.'}catch{$('ticketStatus').textContent='Copy blocked by browser; use Export tickets.'}}
-  function exportTicketSet(){if(!ticketSet.length)return;downloadText(`lottery-draw-lab-v3_9-${ticketGame}-tickets-${Date.now()}.json`,JSON.stringify({version:'3.9',game:PROFILES[ticketGame].name,generatedAt:new Date().toISOString(),lines:ticketSet},null,2))}
+  function exportTicketSet(){if(!ticketSet.length)return;downloadText(`lottery-draw-lab-v4_2-${ticketGame}-tickets-${Date.now()}.json`,JSON.stringify({version:'4.2',game:PROFILES[ticketGame].name,generatedAt:new Date().toISOString(),lines:ticketSet},null,2))}
   window.LotteryLab={physicalTicket,generateMechanicalTickets,profiles:PROFILES,getTicketSet:()=>ticketSet};
 
   function tick(ts){const realdt=Math.min(.05,(ts-lastTS)/1000);lastTS=ts;const p=params();accum+=realdt*p.speed;const fixed=1/120;let guard=0;while(accum>=fixed&&guard<20){const active=main.loading||bonus.loading||main.loaded||bonus.loaded||auto;if(active){main.update(fixed);bonus.update(fixed);if(main.loading||bonus.loading||main.mixOn||bonus.mixOn||auto){simTime+=fixed;autoStep()}}accum-=fixed;guard++}$('simClock').textContent=simTime.toFixed(1)+'s'; if((Math.floor(ts/84)!==Math.floor((ts-realdt*1000)/84)) || auto || main.loading || bonus.loading || main.mixOn || bonus.mixOn){main.draw();bonus.draw()}requestAnimationFrame(tick)}
@@ -575,5 +628,53 @@ button,.tab{touch-action:manipulation;-webkit-tap-highlight-color:transparent}bu
   if(qs.has('selftest'))setTimeout(()=>{try{const a=physicalTicket('selftest-A',game),b=physicalTicket('selftest-B',game),valid=r=>r.white.length===5&&new Set(r.white).size===5&&r.white.every(n=>n>=1&&n<=profile.mainN)&&r.bonus>=1&&r.bonus<=profile.bonusN;const ok=valid(a)&&valid(b)&&JSON.stringify(a)===JSON.stringify(physicalTicket('selftest-A',game));$('selfTest').style.display='block';$('selfTest').textContent=ok?'SELFTEST PASS':'SELFTEST FAIL';document.body.dataset.selftest=ok?'PASS':'FAIL'}catch(e){document.body.dataset.selftest='FAIL';$('selfTest').style.display='block';$('selfTest').textContent='SELFTEST FAIL '+e.message}},120);
 })();
 </script>
+
+<script>
+(function(){
+  const $=id=>document.getElementById(id),chosen=new Set();let audit=null,game='pb';
+  function fmt(n){return Number(n).toLocaleString('en-US')}
+  function classify(nums,n){
+    const a=[...nums].sort((x,y)=>x-y);
+    if(a.length!==5||new Set(a).size!==5)return 0;
+    let m=0,run=1,max=1;
+    for(let i=1;i<5;i++){run=a[i]===a[i-1]+1?run+1:1;max=Math.max(max,run)}
+    if(max>=2)m|=1;if(max>=3)m|=2;if(max>=4)m|=4;if(max>=5)m|=8;
+    if(a[4]-a[0]<=9)m|=16;if(a[4]-a[0]<=14)m|=32;
+    if(a.every(x=>x%2===a[0]%2))m|=64;
+    const h=Math.floor(n/2);if(a[4]<=h||a[0]>h)m|=128;
+    if(Math.floor((a[0]-1)/10)===Math.floor((a[3]-1)/10)||Math.floor((a[1]-1)/10)===Math.floor((a[4]-1)/10))m|=256;
+    for(let d=0;d<10;d++){if(a.filter(x=>x%10===d).length>=3){m|=512;break}}
+    const sum=a.reduce((x,y)=>x+y,0);if(sum<=95||sum>=260)m|=1024;
+    return m
+  }
+  function bits(){return audit?audit.definitions.reduce((m,d)=>m|(chosen.has(d.id)?1<<d.bit:0),0):0}
+  function count(hist,sel){let excluded=0,total=0;for(let i=0;i<hist.length;i++){const k=hist[i];total+=k;if(i&sel)excluded+=k}return {excluded,remaining:total-excluded}}
+  function render(){
+    if(!audit)return;
+    const g=audit.games[game],b=bits(),all=count(g.combination_hist,b),train=count(g.train_hist,b),hold=count(g.holdout_hist,b),p=all.excluded/g.white_total;
+    $('boOriginal').textContent='1 in '+fmt(g.total_jackpot);
+    $('boRemaining').textContent='1 in '+fmt(all.remaining*g.bonus_n);
+    $('boPercent').textContent=(100*p).toFixed(4)+'%';
+    $('boRemoved').textContent=fmt(all.excluded)+' unique white combinations';
+    $('boHistory').innerHTML='<b>Out-of-sample check — '+(game==='pb'?'Powerball':'Mega Millions')+'</b><div>Earlier '+g.train.n+' drawings: '+train.excluded+' excluded vs '+(p*g.train.n).toFixed(1)+' expected by chance.<br>Newer '+g.holdout.n+' held-out drawings: <b>'+hold.excluded+'</b> excluded vs <b>'+(p*g.holdout.n).toFixed(1)+'</b> expected by chance.</div><div class="tiny">Current number-matrix window: '+g.train.start+' to '+g.holdout.end+'. The filter is not a forecast.</div>';
+    $('boRows').innerHTML=[...g.rules].sort((a,b)=>a.share-b.share).map(r=>'<tr><td>'+audit.definitions.find(d=>d.id===r.id).label+'</td><td>'+(100*r.share).toFixed(r.share<.001?5:3)+'%</td><td>'+r.all_obs+'</td><td>'+r.all_expected.toFixed(2)+'</td></tr>').join('');
+    $('boFilters').innerHTML=audit.definitions.map(d=>{
+      const rule=g.rules.find(r=>r.id===d.id),pct=(100*rule.share).toFixed(rule.share<.001?5:3);
+      return '<label class="bo-filter"><input type="checkbox" data-rule="'+d.id+'" '+(chosen.has(d.id)?'checked':'')+'><div><b>'+d.label+'</b><small>'+pct+'% of possibilities · '+d.meaning+'</small></div></label>';
+    }).join('');
+    $('boFilters').querySelectorAll('input[data-rule]').forEach(input=>input.onchange=()=>{
+      input.checked?chosen.add(input.dataset.rule):chosen.delete(input.dataset.rule);render();
+    });
+  }
+  $('boGame').onchange=ev=>{game=ev.target.value;render()};
+  $('boClear').onclick=()=>{chosen.clear();render()};
+  $('boPreset').onclick=()=>{chosen.clear();chosen.add('run4');chosen.add('span9');render()};
+  window.BrentOdds={get loaded(){return !!audit},getBits:bits,rejects:(nums,selected,g)=>audit?Boolean(classify(nums,audit.games[g].white_n)&selected):false};
+  fetch('research/brents_odds_v2.json').then(response=>{if(!response.ok)throw Error('HTTP '+response.status);return response.json()}).then(data=>{
+    audit=data;$('boApplyTickets').disabled=false;render();
+  }).catch(error=>{$('boFilters').textContent='Could not load research data: '+error.message;$('boHistory').textContent='The simulator remains available. Refresh Safari to retry.'});
+})();
+</script>
+
 </body>
 </html>
