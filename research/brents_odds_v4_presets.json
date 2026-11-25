@@ -1,0 +1,192 @@
+{
+  "version": "4.0",
+  "definition": "Theoretical filtered ticket pool, not the real jackpot odds for a retained ticket",
+  "window": {
+    "start": "2021-11-24",
+    "end": "2026-11-24",
+    "holdout_start": "2025-11-24"
+  },
+  "presets": [
+    {
+      "id": "rare",
+      "name": "Rare structural exclusions",
+      "description": "Consecutive runs, extremely narrow span, aligned bands, same-ending digits, single-parity and single-half shapes.",
+      "ids": [
+        "run4",
+        "span14",
+        "band10_4",
+        "end4",
+        "oneParity",
+        "half5",
+        "end5",
+        "step10"
+      ],
+      "games": {
+        "pb": {
+          "white_excluded": 1250316,
+          "full_ticket_excluded": 32508216,
+          "full_ticket_remaining": 259693122,
+          "excluded_share": 0.11125279652210217,
+          "train_excluded": 69,
+          "train_total": 626,
+          "holdout_excluded": 13,
+          "holdout_total": 157,
+          "expected_training": 69.64425062283595,
+          "expected_holdout": 17.46668905397004,
+          "train_deviation_pp": -0.1029154349578204,
+          "holdout_deviation_pp": -2.8450248751401537
+        },
+        "mm": {
+          "white_excluded": 1345360,
+          "full_ticket_excluded": 32288640,
+          "full_ticket_remaining": 258183696,
+          "excluded_share": 0.11115908814118533,
+          "train_excluded": 49,
+          "train_total": 417,
+          "holdout_excluded": 11,
+          "holdout_total": 104,
+          "expected_training": 46.353339754874284,
+          "expected_holdout": 11.560545166683275,
+          "train_deviation_pp": 0.6346907062651606,
+          "holdout_deviation_pp": -0.5389857371954563
+        }
+      }
+    },
+    {
+      "id": "broad",
+      "name": "Broad structural exclusions",
+      "description": "Narrower distribution range, sum tails, ending-digit clusters, repeated neighboring pairs, same-half and same-parity shapes.",
+      "ids": [
+        "span35",
+        "sum120",
+        "sum245",
+        "end3",
+        "adj2",
+        "half5",
+        "oneParity"
+      ],
+      "games": {
+        "pb": {
+          "white_excluded": 4081119,
+          "full_ticket_excluded": 106109094,
+          "full_ticket_remaining": 186092244,
+          "excluded_share": 0.36313692033812656,
+          "train_excluded": 225,
+          "train_total": 626,
+          "holdout_excluded": 44,
+          "holdout_total": 157,
+          "expected_training": 227.32371213166724,
+          "expected_holdout": 57.01249649308587,
+          "train_deviation_pp": -0.37120002103310235,
+          "holdout_deviation_pp": -8.288214326806287
+        },
+        "mm": {
+          "white_excluded": 4336167,
+          "full_ticket_excluded": 104068008,
+          "full_ticket_remaining": 186404328,
+          "excluded_share": 0.3582716668757055,
+          "train_excluded": 149,
+          "train_total": 417,
+          "holdout_excluded": 35,
+          "holdout_total": 104,
+          "expected_training": 149.3992850871692,
+          "expected_holdout": 37.260253355073374,
+          "train_deviation_pp": -0.0957518194650342,
+          "holdout_deviation_pp": -2.173320533724393
+        }
+      }
+    },
+    {
+      "id": "deep",
+      "name": "Deep structural exclusions",
+      "description": "Four or more in the same half, narrow span, sum tails, ending digits, repeated neighbors, 3+ in a band and zero prime numbers.",
+      "ids": [
+        "half4",
+        "span40",
+        "sum120",
+        "sum245",
+        "end3",
+        "adj2",
+        "band10_3",
+        "zeroPrime"
+      ],
+      "games": {
+        "pb": {
+          "white_excluded": 7143275,
+          "full_ticket_excluded": 185725150,
+          "full_ticket_remaining": 106476188,
+          "excluded_share": 0.6356067746684992,
+          "train_excluded": 391,
+          "train_total": 626,
+          "holdout_excluded": 95,
+          "holdout_total": 157,
+          "expected_training": 397.88984094248053,
+          "expected_holdout": 99.79026362295438,
+          "train_deviation_pp": -1.1006135690863506,
+          "holdout_deviation_pp": -3.051123326722538
+        },
+        "mm": {
+          "white_excluded": 7647988,
+          "full_ticket_excluded": 183551712,
+          "full_ticket_remaining": 106920624,
+          "excluded_share": 0.6319077214981326,
+          "train_excluded": 259,
+          "train_total": 417,
+          "holdout_excluded": 63,
+          "holdout_total": 104,
+          "expected_training": 263.5055198647213,
+          "expected_holdout": 65.71840303580579,
+          "train_deviation_pp": -1.080460399213734,
+          "holdout_deviation_pp": -2.613849072890184
+        }
+      }
+    },
+    {
+      "id": "maximum",
+      "name": "Maximum experimental exclusions",
+      "description": "Deep structural rules plus 4+ same parity and 3+ low-range numbers. Very restrictive; removes many historically winning outcomes.",
+      "ids": [
+        "half4",
+        "span40",
+        "sum120",
+        "sum245",
+        "end3",
+        "adj2",
+        "band10_3",
+        "zeroPrime",
+        "parity4",
+        "bottom20_3"
+      ],
+      "games": {
+        "pb": {
+          "white_excluded": 8670918,
+          "full_ticket_excluded": 225443868,
+          "full_ticket_remaining": 66757470,
+          "excluded_share": 0.7715360564160045,
+          "train_excluded": 473,
+          "train_total": 626,
+          "holdout_excluded": 119,
+          "holdout_total": 157,
+          "expected_training": 482.98157131641887,
+          "expected_holdout": 121.13116085731271,
+          "train_deviation_pp": -1.5945002102905503,
+          "holdout_deviation_pp": -1.3574272976514035
+        },
+        "mm": {
+          "white_excluded": 9282491,
+          "full_ticket_excluded": 222779784,
+          "full_ticket_remaining": 67692552,
+          "excluded_share": 0.7669569745189091,
+          "train_excluded": 310,
+          "train_total": 417,
+          "holdout_excluded": 80,
+          "holdout_total": 104,
+          "expected_training": 319.8210583743851,
+          "expected_holdout": 79.76352534996654,
+          "train_deviation_pp": -2.3551698739532556,
+          "holdout_deviation_pp": 0.22737947118601776
+        }
+      }
+    }
+  ]
+}
