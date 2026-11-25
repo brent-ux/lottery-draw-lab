@@ -166,7 +166,7 @@ button,.tab{touch-action:manipulation;-webkit-tap-highlight-color:transparent}bu
 
 
   <section id="boPanel" class="bo-panel">
-    <div class="bo-head"><div><h2>Brent's Odds 2.0</h2><div class="tiny">Exhaustive 5-number audit · 11 exploratory rules · historical validation</div></div><div class="setting"><label>Game</label><select id="boGame"><option value="pb">Powerball</option><option value="mm">Mega Millions</option></select></div></div>
+    <div class="bo-head"><div><h2>Brent's Odds 3.0</h2><div class="tiny">Five-year deep research · 110 patterns audited · 29 exact interactive filters</div></div><div class="setting"><label>Game</label><select id="boGame"><option value="pb">Powerball</option><option value="mm">Mega Millions</option></select></div></div>
     <div class="bo-body">
       <div class="bo-stats">
         <div class="bo-stat"><small>Official jackpot combinations</small><strong id="boOriginal">—</strong><span>Original possible outcomes</span></div>
@@ -174,12 +174,13 @@ button,.tab{touch-action:manipulation;-webkit-tap-highlight-color:transparent}bu
         <div class="bo-stat"><small>Possible outcomes removed</small><strong id="boPercent">—</strong><span id="boRemoved">—</span></div>
       </div>
       <div class="bo-warning"><strong>Important:</strong> Brent's Odds describes your reduced <em>playing pool</em>, not improved real jackpot odds. Every excluded combination may still win. No tested rule has established a predictive advantage.</div>
-      <div class="bo-buttons"><button id="boPreset" type="button">Explore rare-pattern preset</button><button id="boClear" type="button">Clear all</button><a href="research/brents_odds_v2_summary.csv" download>Download full audit CSV</a></div>
+      <div class="bo-buttons"><button id="boPreset" type="button">Explore rare-pattern preset</button><button id="boClear" type="button">Clear all</button><a href="research/brents_odds_v2_summary.csv" download>Download original v2 CSV</a></div>
       <div id="boFilters" class="bo-filters">Loading audit…</div>
       <div id="boHistory" class="bo-history">Loading historical comparisons…</div>
-      <h3>Candidate filters — ranked by rarity</h3>
+      <h3>29 interactive filters — ranked by theoretical rarity</h3>
       <div class="bo-table-scroll"><table class="bo-table"><thead><tr><th>Pattern</th><th>Share of combinations</th><th>Historical hits</th><th>Random expectation</th></tr></thead><tbody id="boRows"></tbody></table></div>
-      <div class="bo-foot">Current matrix periods: Powerball October 2015 onward, Mega Millions April 2025 onward. The most recent quarter of drawings is held out separately. Different historical matrices are not pooled for probability comparisons. <a href="research/brents_odds_v2.json">Full enumeration and historical mask data</a>.</div>
+      <details class="bo-foot" style="margin-top:16px"><summary style="cursor:pointer;color:#91bfff;font-weight:600">Open all 110 candidate-filter tests (full five-year review)</summary><div class="bo-table-scroll" style="margin-top:10px"><table class="bo-table"><thead><tr><th>Candidate exclusion</th><th>Theoretical share</th><th>Observed (5 years)</th><th>Expected by chance</th></tr></thead><tbody id="boCatalogRows"></tbody></table></div></details>
+      <div class="bo-foot">The five-year window is November 24, 2021 – November 24, 2026. Powerball uses 783 historical drawings; Mega Millions 521. White-ball ranges remain unchanged (PB 1–69; MM 1–70), though Mega Millions bonus rules changed in 2025. The latest 12 months are reported separately as holdout. <a href="research/brents_odds_5yr_v3.json">Complete five-year research data</a>.</div>
     </div>
   </section>
   <div class="footer">Model boundary: this is a deterministic, seedable 2D mechanical-process simulation, not certified lottery equipment and not a forecasting method. Every numbered ball uses the same simulated material/physics; only its number and starting state differ. Published facts, reported details and lab proxies are identified separately. Exact proprietary operating parameters that are not public remain editable rather than being presented as measured facts.</div>
@@ -629,50 +630,95 @@ button,.tab{touch-action:manipulation;-webkit-tap-highlight-color:transparent}bu
 })();
 </script>
 
+
 <script>
 (function(){
-  const $=id=>document.getElementById(id),chosen=new Set();let audit=null,game='pb';
-  function fmt(n){return Number(n).toLocaleString('en-US')}
-  function classify(nums,n){
+  const $=id=>document.getElementById(id), chosen=new Set();
+  let research=null, game='pb';
+  const fmt=n=>Number(n).toLocaleString('en-US');
+  const mask27=(1<<27)-1;
+  function features(nums,n){
     const a=[...nums].sort((x,y)=>x-y);
-    if(a.length!==5||new Set(a).size!==5)return 0;
-    let m=0,run=1,max=1;
-    for(let i=1;i<5;i++){run=a[i]===a[i-1]+1?run+1:1;max=Math.max(max,run)}
-    if(max>=2)m|=1;if(max>=3)m|=2;if(max>=4)m|=4;if(max>=5)m|=8;
-    if(a[4]-a[0]<=9)m|=16;if(a[4]-a[0]<=14)m|=32;
-    if(a.every(x=>x%2===a[0]%2))m|=64;
-    const h=Math.floor(n/2);if(a[4]<=h||a[0]>h)m|=128;
-    if(Math.floor((a[0]-1)/10)===Math.floor((a[3]-1)/10)||Math.floor((a[1]-1)/10)===Math.floor((a[4]-1)/10))m|=256;
-    for(let d=0;d<10;d++){if(a.filter(x=>x%10===d).length>=3){m|=512;break}}
-    const sum=a.reduce((x,y)=>x+y,0);if(sum<=95||sum>=260)m|=1024;
-    return m
+    if(a.length!==5||new Set(a).size!==5||a.some(x=>x<1||x>n))return null;
+    const g=[a[1]-a[0],a[2]-a[1],a[3]-a[2],a[4]-a[3]];
+    let run=1,maxRun=1;
+    for(const gap of g){run=gap===1?run+1:1;maxRun=Math.max(maxRun,run)}
+    const maxGroup=values=>Math.max(...values.map(v=>values.filter(x=>x===v).length));
+    const odd=a.filter(x=>x&1).length,h=Math.floor(n/2),lo=a.filter(x=>x<=h).length;
+    const sum=a.reduce((x,y)=>x+y,0);
+    const isPrime=v=>{if(v<2)return false;for(let k=2;k*k<=v;k++)if(v%k===0)return false;return true};
+    return {
+      sum,span:a[4]-a[0],minGap:Math.min(...g),maxGap:Math.max(...g),adjacent:g.filter(x=>x===1).length,
+      near2:g.filter(x=>x<=2).length,maxRun,oddExtreme:+(odd===0||odd===5),maxHalf:Math.max(lo,5-lo),
+      band10:maxGroup(a.map(x=>Math.floor((x-1)/10))),maxEnd:maxGroup(a.map(x=>x%10)),
+      maxMod3:maxGroup(a.map(x=>x%3)),mult5:a.filter(x=>x%5===0).length,primeCount:a.filter(isPrime).length,
+      gapRepeat:maxGroup(g),min:a[0],max:a[4],low10:a.filter(x=>x<=10).length,
+      high10:a.filter(x=>x>n-10).length,low20:a.filter(x=>x<=20).length,high20:a.filter(x=>x>n-20).length,
+      tenStep5:+g.every(x=>x===10)
+    };
   }
-  function bits(){return audit?audit.definitions.reduce((m,d)=>m|(chosen.has(d.id)?1<<d.bit:0),0):0}
-  function count(hist,sel){let excluded=0,total=0;for(let i=0;i<hist.length;i++){const k=hist[i];total+=k;if(i&sel)excluded+=k}return {excluded,remaining:total-excluded}}
+  function maskWhite(nums,n){
+    if(!research)return 0;
+    const f=features(nums,n);if(!f)return 0;
+    let m=0;
+    for(const rule of research.core_rules){
+      const v=f[rule.feature],hit=rule.op==='gte'?v>=rule.value:rule.op==='lte'?v<=rule.value:v===rule.value;
+      if(hit)m|=(1<<rule.bit);
+    }
+    return m;
+  }
+  function selectedBits(){return research?research.core_rules.reduce((m,r)=>m|(chosen.has(r.id)?1<<r.bit:0),0):0}
+  function excluded(g,bits,hist){
+    const base=bits&mask27;
+    let removed=0;
+    for(const [mask,count] of hist)if(mask&base)removed+=count;
+    if(hist===g.histogram&&(bits&(1<<27)||bits&(1<<28))){
+      const useAll=Boolean(bits&(1<<27));
+      for(const [mask,nAll,nStep] of g.special_hists)
+        if(!(mask&base))removed+=useAll?nAll:nStep;
+    }
+    return removed;
+  }
   function render(){
-    if(!audit)return;
-    const g=audit.games[game],b=bits(),all=count(g.combination_hist,b),train=count(g.train_hist,b),hold=count(g.holdout_hist,b),p=all.excluded/g.white_total;
-    $('boOriginal').textContent='1 in '+fmt(g.total_jackpot);
-    $('boRemaining').textContent='1 in '+fmt(all.remaining*g.bonus_n);
-    $('boPercent').textContent=(100*p).toFixed(4)+'%';
-    $('boRemoved').textContent=fmt(all.excluded)+' unique white combinations';
-    $('boHistory').innerHTML='<b>Out-of-sample check — '+(game==='pb'?'Powerball':'Mega Millions')+'</b><div>Earlier '+g.train.n+' drawings: '+train.excluded+' excluded vs '+(p*g.train.n).toFixed(1)+' expected by chance.<br>Newer '+g.holdout.n+' held-out drawings: <b>'+hold.excluded+'</b> excluded vs <b>'+(p*g.holdout.n).toFixed(1)+'</b> expected by chance.</div><div class="tiny">Current number-matrix window: '+g.train.start+' to '+g.holdout.end+'. The filter is not a forecast.</div>';
-    $('boRows').innerHTML=[...g.rules].sort((a,b)=>a.share-b.share).map(r=>'<tr><td>'+audit.definitions.find(d=>d.id===r.id).label+'</td><td>'+(100*r.share).toFixed(r.share<.001?5:3)+'%</td><td>'+r.all_obs+'</td><td>'+r.all_expected.toFixed(2)+'</td></tr>').join('');
-    $('boFilters').innerHTML=audit.definitions.map(d=>{
-      const rule=g.rules.find(r=>r.id===d.id),pct=(100*rule.share).toFixed(rule.share<.001?5:3);
-      return '<label class="bo-filter"><input type="checkbox" data-rule="'+d.id+'" '+(chosen.has(d.id)?'checked':'')+'><div><b>'+d.label+'</b><small>'+pct+'% of possibilities · '+d.meaning+'</small></div></label>';
+    if(!research)return;
+    const g=research.games[game],b=selectedBits(),drop=excluded(g,b,g.histogram),pct=drop/g.total_white;
+    const training=excluded(g,b,g.core_train_hist),held=excluded(g,b,g.core_holdout_hist);
+    $('boOriginal').textContent='1 in '+fmt(g.full_ticket_now);
+    $('boRemaining').textContent='1 in '+fmt((g.total_white-drop)*g.bonus_now);
+    $('boPercent').textContent=(100*pct).toFixed(5)+'%';
+    $('boRemoved').textContent=fmt(drop)+' distinct white combinations';
+    $('boHistory').innerHTML='<b>Five-year draw comparison — '+(game==='pb'?'Powerball':'Mega Millions')+'</b><div>Full window: '+g.n_draws+' drawings ('+g.all_dates[0]+' to '+g.all_dates[1]+').<br>Earlier training period: <b>'+training+'</b> actual eliminated winners versus <b>'+(g.train.n*pct).toFixed(2)+'</b> expected by chance ('+g.train.n+' draws).<br>Most recent 12 months: <b>'+held+'</b> eliminated winners versus <b>'+(g.holdout.n*pct).toFixed(2)+'</b> expected by chance ('+g.holdout.n+' draws).</div><div class="tiny">Zero historical hits often means the pattern is extremely rare, not that a machine mechanically prevents it. These comparisons do not establish a betting advantage.</div>';
+    $('boFilters').innerHTML=research.core_rules.map(r=>{
+      const row=g.catalog.find(x=>x.id===r.id),pct=(100*row.share).toFixed(row.share<.001?5:3);
+      return '<label class="bo-filter"><input type="checkbox" data-rule="'+r.id+'" '+(chosen.has(r.id)?'checked':'')+'><div><b>'+r.label+'</b><small>'+pct+'% of all white outcomes · '+row.all_obs+' observed over '+g.n_draws+' draws</small></div></label>';
     }).join('');
-    $('boFilters').querySelectorAll('input[data-rule]').forEach(input=>input.onchange=()=>{
-      input.checked?chosen.add(input.dataset.rule):chosen.delete(input.dataset.rule);render();
+    $('boFilters').querySelectorAll('input[data-rule]').forEach(x=>x.onchange=()=>{
+      x.checked?chosen.add(x.dataset.rule):chosen.delete(x.dataset.rule);render();
     });
+    $('boRows').innerHTML=[...research.core_rules].sort((a,b)=>
+      g.catalog.find(x=>x.id===a.id).share-g.catalog.find(x=>x.id===b.id).share
+    ).map(r=>{
+      const row=g.catalog.find(x=>x.id===r.id),share=(100*row.share).toFixed(row.share<.001?5:3);
+      return '<tr><td>'+r.label+'</td><td>'+share+'%</td><td>'+row.all_obs+' / '+g.n_draws+'</td><td>'+row.all_expected.toFixed(2)+'</td></tr>';
+    }).join('');
+    $('boCatalogRows').innerHTML=[...g.catalog].sort((a,b)=>a.share-b.share).map(row=>
+      '<tr><td>'+row.label+'</td><td>'+(100*row.share).toFixed(row.share<.001?5:3)+'%</td><td>'+row.all_obs+'</td><td>'+row.all_expected.toFixed(2)+'</td></tr>'
+    ).join('');
   }
   $('boGame').onchange=ev=>{game=ev.target.value;render()};
   $('boClear').onclick=()=>{chosen.clear();render()};
-  $('boPreset').onclick=()=>{chosen.clear();chosen.add('run4');chosen.add('span9');render()};
-  window.BrentOdds={get loaded(){return !!audit},getBits:bits,rejects:(nums,selected,g)=>audit?Boolean(classify(nums,audit.games[g].white_n)&selected):false};
-  fetch('research/brents_odds_v2.json').then(response=>{if(!response.ok)throw Error('HTTP '+response.status);return response.json()}).then(data=>{
-    audit=data;$('boApplyTickets').disabled=false;render();
-  }).catch(error=>{$('boFilters').textContent='Could not load research data: '+error.message;$('boHistory').textContent='The simulator remains available. Refresh Safari to retry.'});
+  $('boPreset').onclick=()=>{chosen.clear();['maxRun_gte4','span_lte9','maxEnd_gte5','tenStep5_eq1'].forEach(id=>chosen.add(id));render()};
+  document.querySelectorAll('.tab[data-game]').forEach(tab=>tab.addEventListener('click',()=>{
+    const next=tab.dataset.game;if(next==='pb'||next==='mm'){game=next;$('boGame').value=next;render()}
+  }));
+  window.BrentOdds={get loaded(){return !!research},getBits:selectedBits,rejects:(nums,bits,g)=>Boolean(maskWhite(nums,research.games[g].n)&bits)};
+  fetch('research/brents_odds_5yr_v3.json').then(r=>{if(!r.ok)throw Error('HTTP '+r.status);return r.json()}).then(data=>{
+    if(data.core_rules.length!==29||!data.games.pb||!data.games.mm)throw Error('Research-data version mismatch');
+    research=data;$('boApplyTickets').disabled=false;render();
+  }).catch(err=>{
+    $('boFilters').textContent='Five-year research data could not load: '+err.message;
+    $('boHistory').textContent='The simulator remains available. Refresh Safari to retry.';
+  });
 })();
 </script>
 
