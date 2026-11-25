@@ -1,0 +1,9 @@
+preset_id,preset_name,game,filters,white_combinations_total,white_excluded,complete_tickets_remaining,complete_tickets_excluded,pct_excluded,training_draws,training_winners_excluded,training_winners_expected,holdout_draws,holdout_winners_excluded,holdout_winners_expected
+rare,"Rare structural exclusions",pb,"run4;span14;band10_4;end4;oneParity;half5;end5;step10",11238513,1250316,259693122,32508216,11.12528,626,69,69.64,157,13,17.47
+rare,"Rare structural exclusions",mm,"run4;span14;band10_4;end4;oneParity;half5;end5;step10",12103014,1345360,258183696,32288640,11.11591,417,49,46.35,104,11,11.56
+broad,"Broad structural exclusions",pb,"span35;sum120;sum245;end3;adj2;half5;oneParity",11238513,4081119,186092244,106109094,36.31369,626,225,227.32,157,44,57.01
+broad,"Broad structural exclusions",mm,"span35;sum120;sum245;end3;adj2;half5;oneParity",12103014,4336167,186404328,104068008,35.82717,417,149,149.40,104,35,37.26
+deep,"Deep structural exclusions",pb,"half4;span40;sum120;sum245;end3;adj2;band10_3;zeroPrime",11238513,7143275,106476188,185725150,63.56068,626,391,397.89,157,95,99.79
+deep,"Deep structural exclusions",mm,"half4;span40;sum120;sum245;end3;adj2;band10_3;zeroPrime",12103014,7647988,106920624,183551712,63.19077,417,259,263.51,104,63,65.72
+maximum,"Maximum experimental exclusions",pb,"half4;span40;sum120;sum245;end3;adj2;band10_3;zeroPrime;parity4;bottom20_3",11238513,8670918,66757470,225443868,77.15361,626,473,482.98,157,119,121.13
+maximum,"Maximum experimental exclusions",mm,"half4;span40;sum120;sum245;end3;adj2;band10_3;zeroPrime;parity4;bottom20_3",12103014,9282491,67692552,222779784,76.69570,417,310,319.82,104,80,79.76
